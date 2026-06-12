@@ -415,6 +415,7 @@
         <!-- 콘텐츠 탭 -->
         <div class="content-tabs">
             <button class="content-tab active" onclick="switchTab('tasks', this)">📌 업무목록</button>
+            <button class="content-tab" onclick="switchTab('progress', this)">📊 진척도</button>
             <button class="content-tab" onclick="switchTab('add', this)">➕ 새 업무 추가</button>
             <button class="content-tab" onclick="switchTab('copy', this)">📋 기존 업무 복사</button>
             <button class="content-tab" onclick="switchTab('data', this)">💾 데이터 관리</button>
@@ -441,6 +442,23 @@
 
                 <div id="taskList" class="task-list">
                     <div class="empty-state"><p>업무를 추가해보세요</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 진척도 탭 -->
+        <div id="tab-progress" class="tab-content">
+            <div class="card">
+                <div class="card-title">📊 진척도</div>
+
+                <div style="margin-bottom: 15px;">
+                    <select id="progressMonthSelect" onchange="updateProgressDisplay()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; font-weight: 500;">
+                        <option value="">월을 선택하세요</option>
+                    </select>
+                </div>
+
+                <div id="progressDisplay" style="min-height: 200px;">
+                    <p style="color: #999; text-align: center; padding: 40px 20px;">월을 선택하면 대분류별 진척도를 볼 수 있습니다</p>
                 </div>
             </div>
         </div>
@@ -836,6 +854,94 @@
                 selectedMonth = monthKey;
                 renderTasks();
             }
+        }
+
+        // 진척도 월 선택 초기화
+        function initializeProgressMonthSelect() {
+            const tasks = loadTasks();
+            const months = new Set();
+
+            tasks.forEach(task => {
+                const date = new Date(task.dueDate);
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                months.add(monthKey);
+            });
+
+            const progressMonthSelect = document.getElementById('progressMonthSelect');
+            progressMonthSelect.innerHTML = '<option value="">월을 선택하세요</option>';
+
+            if (months.size === 0) {
+                return;
+            }
+
+            Array.from(months).sort().reverse().forEach(monthKey => {
+                const [year, month] = monthKey.split('-');
+                const option = document.createElement('option');
+                option.value = monthKey;
+                option.textContent = `${year}년 ${parseInt(month)}월`;
+                progressMonthSelect.appendChild(option);
+            });
+        }
+
+        // 진척도 표시
+        function updateProgressDisplay() {
+            const progressMonthSelect = document.getElementById('progressMonthSelect');
+            const selectedMonthKey = progressMonthSelect.value;
+            const progressDisplay = document.getElementById('progressDisplay');
+
+            if (!selectedMonthKey) {
+                progressDisplay.innerHTML = '<p style="color: #999; text-align: center; padding: 40px 20px;">월을 선택하면 대분류별 진척도를 볼 수 있습니다</p>';
+                return;
+            }
+
+            const tasks = loadTasks();
+            const [year, month] = selectedMonthKey.split('-');
+
+            // 선택된 월의 업무만 필터링
+            const monthTasks = tasks.filter(task => {
+                const date = new Date(task.dueDate);
+                const taskMonthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                return taskMonthKey === selectedMonthKey;
+            });
+
+            if (monthTasks.length === 0) {
+                progressDisplay.innerHTML = '<p style="color: #999; text-align: center; padding: 40px 20px;">이 월에 해당하는 업무가 없습니다</p>';
+                return;
+            }
+
+            // 대분류별로 그룹화
+            const groupedByCategory = {};
+            monthTasks.forEach(task => {
+                if (!groupedByCategory[task.category]) {
+                    groupedByCategory[task.category] = { total: 0, completed: 0 };
+                }
+                groupedByCategory[task.category].total++;
+                if (task.status === 'COMPLETED') {
+                    groupedByCategory[task.category].completed++;
+                }
+            });
+
+            // HTML 생성
+            let html = '';
+            Object.keys(groupedByCategory).sort().forEach(category => {
+                const data = groupedByCategory[category];
+                const percentage = Math.round((data.completed / data.total) * 100);
+                const barColor = percentage === 100 ? '#52c41a' : percentage >= 50 ? '#faad14' : '#ff6b6b';
+
+                html += `
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid ${barColor};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div style="font-weight: 600; font-size: 15px; color: #333;">🏷️ ${category}</div>
+                            <div style="font-size: 14px; font-weight: 500; color: ${barColor};">${data.completed}/${data.total} (${percentage}%)</div>
+                        </div>
+                        <div style="width: 100%; height: 24px; background: #e0e0e0; border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; width: ${percentage}%; background: linear-gradient(90deg, ${barColor}, ${barColor}); display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600; transition: width 0.3s;">${percentage > 10 ? percentage + '%' : ''}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            progressDisplay.innerHTML = html;
         }
 
         // 필터 변경
@@ -1307,6 +1413,7 @@ cd "C:\\Users\\Admin\\Desktop\\2일차 과제-1"
         initializeCategorySelect();
         initializeMonthTabs();
         initializeExistingTaskSelect();
+        initializeProgressMonthSelect();
         renderTasks();
 
         const today = new Date().toISOString().split('T')[0];
