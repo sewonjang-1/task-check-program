@@ -485,6 +485,7 @@
 
     <script>
         let currentFilter = 'all';
+        let editingTaskId = null;
 
         // 날짜 범위 계산
         function getDateRanges() {
@@ -567,7 +568,35 @@
             });
         }
 
-        // 업무 추가
+        // 업무 수정
+        function editTask(id) {
+            const tasks = loadTasks();
+            const task = tasks.find(t => t.id === id);
+
+            if (task) {
+                editingTaskId = id;
+
+                // 폼에 데이터 채우기
+                document.getElementById('categorySelect').value = task.category;
+                document.getElementById('categoryNew').style.display = 'none';
+                document.getElementById('categoryNew').value = '';
+                document.getElementById('subcategory').value = task.subcategory;
+                document.getElementById('title').value = task.title === '(상세내용 없음)' ? '' : task.title;
+                document.getElementById('priority').value = task.priority;
+                document.getElementById('dueDate').value = task.dueDate;
+                document.getElementById('recurringType').value = task.recurringType || 'none';
+
+                // 버튼 텍스트 변경
+                const submitBtn = document.querySelector('.button-group .btn-primary');
+                submitBtn.textContent = '수정 완료';
+                submitBtn.style.background = 'linear-gradient(135deg, #ffa94d 0%, #ff922b 100%)';
+
+                showNotification('업무 정보를 수정하고 "수정 완료" 버튼을 클릭하세요', 'success');
+                document.getElementById('subcategory').focus();
+            }
+        }
+
+        // 업무 추가/수정
         function addTask() {
             let category = document.getElementById('categorySelect').value;
             const categoryNew = document.getElementById('categoryNew').value;
@@ -589,24 +618,44 @@
             }
 
             const tasks = loadTasks();
-            const newTask = {
-                id: Date.now(),
-                category,
-                subcategory,
-                title: title || '(상세내용 없음)',
-                priority,
-                dueDate,
-                status: 'PENDING',
-                isRecurring: recurringType !== 'none',
-                recurringType: recurringType
-            };
 
-            tasks.push(newTask);
+            if (editingTaskId) {
+                // 기존 업무 수정
+                const taskIndex = tasks.findIndex(t => t.id === editingTaskId);
+                if (taskIndex !== -1) {
+                    tasks[taskIndex] = {
+                        ...tasks[taskIndex],
+                        category,
+                        subcategory,
+                        title: title || '(상세내용 없음)',
+                        priority,
+                        dueDate,
+                        isRecurring: recurringType !== 'none',
+                        recurringType: recurringType
+                    };
+                }
+                showNotification('업무가 수정되었습니다', 'success');
+            } else {
+                // 새 업무 추가
+                const newTask = {
+                    id: Date.now(),
+                    category,
+                    subcategory,
+                    title: title || '(상세내용 없음)',
+                    priority,
+                    dueDate,
+                    status: 'PENDING',
+                    isRecurring: recurringType !== 'none',
+                    recurringType: recurringType
+                };
+                tasks.push(newTask);
+                showNotification('업무가 추가되었습니다', 'success');
+            }
+
             saveTasks(tasks);
             initializeCategorySelect();
             renderTasks();
             clearForm();
-            showNotification('업무가 추가되었습니다', 'success');
         }
 
         // 업무 복사
@@ -752,6 +801,7 @@
                                         </div>
                                     </div>
                                     <div class="task-actions">
+                                        <button class="btn-secondary" onclick="editTask(${task.id})" style="background: #ffa94d; color: white; padding: 6px 12px;">수정</button>
                                         <button class="btn-secondary" onclick="copyTask(${task.id})" style="background: #667eea; color: white; padding: 6px 12px;">복사</button>
                                         <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
                                     </div>
@@ -770,6 +820,8 @@
 
         // 폼 초기화
         function clearForm() {
+            editingTaskId = null;
+
             document.getElementById('categorySelect').value = '';
             document.getElementById('categoryNew').value = '';
             document.getElementById('categoryNew').style.display = 'none';
@@ -781,6 +833,11 @@
             // 오늘 날짜로 설정
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('dueDate').value = today;
+
+            // 버튼 텍스트 원래대로 복구
+            const submitBtn = document.querySelector('.button-group .btn-primary');
+            submitBtn.textContent = '업무 추가';
+            submitBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
 
         // 데이터 내보내기 (JSON 파일로 다운로드)
