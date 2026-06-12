@@ -408,8 +408,13 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="subcategory">소분류 *</label>
+                    <input type="text" id="subcategory" placeholder="예) 수출, 내수, 기획, 검토">
+                </div>
+
+                <div class="form-group">
                     <label for="title">상세내용 *</label>
-                    <input type="text" id="title" placeholder="예) 수출실적 검토하기">
+                    <input type="text" id="title" placeholder="예) 선적일 확인하기, 영세율 서류 요청하기">
                 </div>
 
                 <div class="form-group">
@@ -425,14 +430,6 @@
                 <div class="form-group">
                     <label for="dueDate">기한 *</label>
                     <input type="date" id="dueDate">
-                </div>
-
-                <div class="form-group">
-                    <label>소분류 (선택)</label>
-                    <div class="subtask-add">
-                        <div id="subtasksList"></div>
-                        <button type="button" class="btn-add-subtask" onclick="addSubtaskField()">+ 소분류 추가</button>
-                    </div>
                 </div>
 
                 <div class="button-group">
@@ -465,7 +462,6 @@
 
     <script>
         let currentFilter = 'all';
-        let subtaskFields = [];
 
         // 날짜 범위 계산
         function getDateRanges() {
@@ -510,64 +506,25 @@
             localStorage.setItem('tasks', JSON.stringify(tasks));
         }
 
-        // 소분류 필드 추가
-        function addSubtaskField() {
-            const id = Date.now();
-            subtaskFields.push(id);
-
-            const container = document.getElementById('subtasksList');
-            const html = `
-                <div class="subtask-item" id="field-${id}">
-                    <input type="text" placeholder="소분류명" class="subtask-name-${id}">
-                    <select class="subtask-type-${id}">
-                        <option value="">분류 선택</option>
-                        <option value="수출">수출</option>
-                        <option value="내수">내수</option>
-                        <option value="기타">기타</option>
-                    </select>
-                    <button type="button" class="btn-remove-subtask" onclick="removeSubtaskField(${id})">제거</button>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-        }
-
-        function removeSubtaskField(id) {
-            subtaskFields = subtaskFields.filter(f => f !== id);
-            document.getElementById(`field-${id}`).remove();
-        }
-
         // 업무 추가
         function addTask() {
             const category = document.getElementById('category').value;
+            const subcategory = document.getElementById('subcategory').value;
             const title = document.getElementById('title').value;
             const priority = document.getElementById('priority').value;
             const dueDate = document.getElementById('dueDate').value;
 
-            if (!category || !title || !priority || !dueDate) {
+            if (!category || !subcategory || !title || !priority || !dueDate) {
                 showNotification('필수 항목을 모두 입력하세요', 'error');
                 return;
             }
-
-            // 소분류 수집
-            const subtasks = [];
-            subtaskFields.forEach((fieldId, idx) => {
-                const name = document.querySelector(`.subtask-name-${fieldId}`).value;
-                const type = document.querySelector(`.subtask-type-${fieldId}`).value;
-                if (name) {
-                    subtasks.push({
-                        id: `${Date.now()}-${idx}`,
-                        name: name,
-                        type: type || '기타'
-                    });
-                }
-            });
 
             const tasks = loadTasks();
             const newTask = {
                 id: Date.now(),
                 category,
+                subcategory,
                 title,
-                subtasks,
                 priority,
                 dueDate,
                 status: 'PENDING'
@@ -639,11 +596,12 @@
                 return;
             }
 
-            // 대분류별 그룹화
+            // 대분류 > 소분류별 그룹화
             const grouped = {};
             sorted.forEach(task => {
-                if (!grouped[task.category]) grouped[task.category] = [];
-                grouped[task.category].push(task);
+                if (!grouped[task.category]) grouped[task.category] = {};
+                if (!grouped[task.category][task.subcategory]) grouped[task.category][task.subcategory] = [];
+                grouped[task.category][task.subcategory].push(task);
             });
 
             let html = '';
@@ -651,49 +609,41 @@
                 html += `<div class="category-group">
                     <div class="category-name">🏷️ ${category}</div>`;
 
-                grouped[category].forEach(task => {
-                    const priorityMap = { HIGH: '높음', MEDIUM: '중간', LOW: '낮음' };
-                    const statusText = task.status === 'COMPLETED' ? '완료' : '진행중';
+                Object.keys(grouped[category]).forEach(subcategory => {
+                    const tasks = grouped[category][subcategory];
 
-                    html += `
-                        <div class="task-item">
-                            <div class="task-header">
-                                <div class="task-main">
-                                    <div class="task-title">
-                                        <input type="checkbox" ${task.status === 'COMPLETED' ? 'checked' : ''}
-                                            onchange="toggleComplete(${task.id})">
-                                        ${task.title}
+                    html += `<div style="margin-left: 15px; margin-bottom: 15px;">
+                        <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 13px;">📂 ${subcategory}</div>`;
+
+                    tasks.forEach(task => {
+                        const priorityMap = { HIGH: '높음', MEDIUM: '중간', LOW: '낮음' };
+                        const statusText = task.status === 'COMPLETED' ? '완료' : '진행중';
+
+                        html += `
+                            <div class="task-item" style="margin-bottom: 8px;">
+                                <div class="task-header">
+                                    <div class="task-main">
+                                        <div class="task-title">
+                                            <input type="checkbox" ${task.status === 'COMPLETED' ? 'checked' : ''}
+                                                onchange="toggleComplete(${task.id})">
+                                            ${task.title}
+                                        </div>
+                                        <div class="task-meta">
+                                            <span class="priority-badge priority-${task.priority.toLowerCase()}">
+                                                ${priorityMap[task.priority]}
+                                            </span>
+                                            <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}">
+                                                ${statusText}
+                                            </span>
+                                            <span>${task.dueDate}</span>
+                                        </div>
                                     </div>
-                                    <div class="task-meta">
-                                        <span class="priority-badge priority-${task.priority.toLowerCase()}">
-                                            ${priorityMap[task.priority]}
-                                        </span>
-                                        <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}">
-                                            ${statusText}
-                                        </span>
-                                        <span>${task.dueDate}</span>
+                                    <div class="task-actions">
+                                        <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
                                     </div>
-                                </div>
-                                <div class="task-actions">
-                                    <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
                                 </div>
                             </div>`;
-
-                    // 소분류 표시
-                    if (task.subtasks && task.subtasks.length > 0) {
-                        html += `<div class="subtasks-list">`;
-                        task.subtasks.forEach(subtask => {
-                            html += `
-                                <div class="subtask-item-display">
-                                    <div class="subtask-info">
-                                        <div class="subtask-name">✓ ${subtask.name}</div>
-                                        <div class="subtask-type">${subtask.type}</div>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        html += `</div>`;
-                    }
+                    });
 
                     html += `</div>`;
                 });
@@ -707,11 +657,10 @@
         // 폼 초기화
         function clearForm() {
             document.getElementById('category').value = '';
+            document.getElementById('subcategory').value = '';
             document.getElementById('title').value = '';
             document.getElementById('priority').value = '';
             document.getElementById('dueDate').value = '';
-            subtaskFields = [];
-            document.getElementById('subtasksList').innerHTML = '';
         }
 
         // 알림 표시

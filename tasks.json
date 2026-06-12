@@ -3,139 +3,125 @@
     {
       "id": 1,
       "category": "부가세 신고",
-      "title": "수출실적 검토하기",
-      "subtasks": [
-        {
-          "id": "1-1",
-          "name": "선적일 확인하기",
-          "type": "수출"
-        },
-        {
-          "id": "1-2",
-          "name": "영세율 서류 요청하기",
-          "type": "수출/내수"
-        }
-      ],
+      "subcategory": "수출",
+      "title": "선적일 확인하기",
       "priority": "HIGH",
       "dueDate": "2026-06-12",
       "status": "PENDING"
     },
     {
       "id": 2,
-      "category": "프로젝트 관리",
-      "title": "프로젝트 기획서 작성",
-      "subtasks": [
-        {
-          "id": "2-1",
-          "name": "요구사항 정의",
-          "type": "기획"
-        },
-        {
-          "id": "2-2",
-          "name": "일정 계획 수립",
-          "type": "계획"
-        }
-      ],
+      "category": "부가세 신고",
+      "subcategory": "수출/내수",
+      "title": "영세율 서류 요청하기",
       "priority": "HIGH",
       "dueDate": "2026-06-12",
       "status": "PENDING"
     },
     {
       "id": 3,
-      "category": "회의 준비",
-      "title": "오후 3시 회의 자료 준비",
-      "subtasks": [
-        {
-          "id": "3-1",
-          "name": "발표 자료 작성",
-          "type": "준비"
-        },
-        {
-          "id": "3-2",
-          "name": "자료 검토",
-          "type": "검토"
-        }
-      ],
+      "category": "프로젝트 관리",
+      "subcategory": "기획",
+      "title": "요구사항 정의",
       "priority": "HIGH",
       "dueDate": "2026-06-12",
       "status": "PENDING"
     },
     {
       "id": 4,
-      "category": "이메일 관리",
-      "title": "미처리 이메일 처리",
-      "subtasks": [
-        {
-          "id": "4-1",
-          "name": "고객 문의 답변",
-          "type": "고객"
-        },
-        {
-          "id": "4-2",
-          "name": "팀 내부 메일 답변",
-          "type": "내부"
-        }
-      ],
-      "priority": "MEDIUM",
+      "category": "프로젝트 관리",
+      "subcategory": "계획",
+      "title": "일정 계획 수립",
+      "priority": "HIGH",
       "dueDate": "2026-06-12",
       "status": "PENDING"
     },
     {
       "id": 5,
+      "category": "회의 준비",
+      "subcategory": "준비",
+      "title": "발표 자료 작성",
+      "priority": "HIGH",
+      "dueDate": "2026-06-12",
+      "status": "PENDING"
+    },
+    {
+      "id": 6,
+      "category": "회의 준비",
+      "subcategory": "검토",
+      "title": "자료 검토",
+      "priority": "HIGH",
+      "dueDate": "2026-06-12",
+      "status": "PENDING"
+    },
+    {
+      "id": 7,
+      "category": "이메일 관리",
+      "subcategory": "고객",
+      "title": "고객 문의 답변",
+      "priority": "MEDIUM",
+      "dueDate": "2026-06-12",
+      "status": "PENDING"
+    },
+    {
+      "id": 8,
+      "category": "이메일 관리",
+      "subcategory": "내부",
+      "title": "팀 내부 메일 답변",
+      "priority": "MEDIUM",
+      "dueDate": "2026-06-12",
+      "status": "PENDING"
+    },
+    {
+      "id": 9,
       "category": "팀 관리",
-      "title": "주간 보고서 검토",
-      "subtasks": [
-        {
-          "id": "5-1",
-          "name": "팀원 보고서 확인",
-          "type": "검토"
-        },
-        {
-          "id": "5-2",
-          "name": "피드백 전달",
-          "type": "소통"
-        }
-      ],
+      "subcategory": "검토",
+      "title": "팀원 보고서 확인",
       "priority": "MEDIUM",
       "dueDate": "2026-06-15",
       "status": "PENDING"
     },
     {
-      "id": 6,
+      "id": 10,
+      "category": "팀 관리",
+      "subcategory": "소통",
+      "title": "피드백 전달",
+      "priority": "MEDIUM",
+      "dueDate": "2026-06-15",
+      "status": "PENDING"
+    },
+    {
+      "id": 11,
       "category": "고객 관리",
-      "title": "고객 피드백 분석",
-      "subtasks": [
-        {
-          "id": "6-1",
-          "name": "피드백 수집",
-          "type": "수집"
-        },
-        {
-          "id": "6-2",
-          "name": "분석 및 보고",
-          "type": "분석"
-        }
-      ],
+      "subcategory": "수집",
+      "title": "피드백 수집",
       "priority": "MEDIUM",
       "dueDate": "2026-06-17",
       "status": "PENDING"
     },
     {
-      "id": 7,
+      "id": 12,
+      "category": "고객 관리",
+      "subcategory": "분석",
+      "title": "분석 및 보고",
+      "priority": "MEDIUM",
+      "dueDate": "2026-06-17",
+      "status": "PENDING"
+    },
+    {
+      "id": 13,
       "category": "코드 관리",
-      "title": "PR 코드 리뷰",
-      "subtasks": [
-        {
-          "id": "7-1",
-          "name": "코드 검토",
-          "type": "검토"
-        },
-        {
-          "id": "7-2",
-          "name": "피드백 작성",
-          "type": "피드백"
-        }
-      ],
+      "subcategory": "검토",
+      "title": "코드 검토",
+      "priority": "LOW",
+      "dueDate": "2026-06-25",
+      "status": "PENDING"
+    },
+    {
+      "id": 14,
+      "category": "코드 관리",
+      "subcategory": "피드백",
+      "title": "피드백 작성",
       "priority": "LOW",
       "dueDate": "2026-06-25",
       "status": "PENDING"
