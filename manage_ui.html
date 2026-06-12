@@ -394,7 +394,14 @@
     <div class="container">
         <div class="header">
             <h1>📋 업무 관리 시스템 (계층 구조)</h1>
-            <p>대분류 > 상세내용 > 소분류로 체계적으로 관리</p>
+            <p>대분류 > 소분류 > 상세내용로 체계적으로 관리</p>
+            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+                <button onclick="exportTasks()" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 13px;">📥 데이터 내보내기</button>
+                <label style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; margin: 0;">
+                    📤 데이터 가져오기
+                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importTasks(this.files[0])">
+                </label>
+            </div>
         </div>
 
         <div class="main-content">
@@ -774,6 +781,81 @@
             // 오늘 날짜로 설정
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('dueDate').value = today;
+        }
+
+        // 데이터 내보내기 (JSON 파일로 다운로드)
+        function exportTasks() {
+            const tasks = loadTasks();
+            const dataStr = JSON.stringify(tasks, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `tasks_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showNotification('업무 데이터가 다운로드되었습니다', 'success');
+        }
+
+        // 데이터 가져오기 (JSON 파일 업로드)
+        function importTasks(file) {
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+
+                    if (!Array.isArray(importedData)) {
+                        throw new Error('Invalid file format');
+                    }
+
+                    // 기존 데이터와 병합할지 덮어쓸지 선택
+                    const currentTasks = loadTasks();
+
+                    if (currentTasks.length > 0) {
+                        const overwrite = confirm(
+                            '기존 데이터가 있습니다.\n\n' +
+                            '확인: 새 데이터로 완전히 덮어쓰기\n' +
+                            '취소: 새 데이터와 기존 데이터 병합'
+                        );
+
+                        if (overwrite) {
+                            saveTasks(importedData);
+                        } else {
+                            const merged = [...currentTasks];
+                            importedData.forEach(newTask => {
+                                const exists = merged.some(t =>
+                                    t.category === newTask.category &&
+                                    t.subcategory === newTask.subcategory &&
+                                    t.title === newTask.title &&
+                                    t.dueDate === newTask.dueDate
+                                );
+                                if (!exists) {
+                                    merged.push(newTask);
+                                }
+                            });
+                            saveTasks(merged);
+                        }
+                    } else {
+                        saveTasks(importedData);
+                    }
+
+                    loadRecurringTasks();
+                    initializeCategorySelect();
+                    renderTasks();
+                    showNotification('업무 데이터가 가져와졌습니다', 'success');
+
+                    // 파일 입력 초기화
+                    document.getElementById('importFile').value = '';
+                } catch (error) {
+                    showNotification('파일 형식이 올바르지 않습니다', 'error');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
         }
 
         // 알림 표시
