@@ -506,11 +506,6 @@
                 <p style="font-size: 12px; color: #999; margin-bottom: 15px;">월별로 기존 업무를 선택하여 새 기한으로 복사합니다</p>
 
                 <div class="form-group">
-                    <label for="copyDate">새 기한 *</label>
-                    <input type="date" id="copyDate">
-                </div>
-
-                <div class="form-group">
                     <label for="copyPriority">우선순위 (선택사항)</label>
                     <select id="copyPriority">
                         <option value="">기존 우선순위 유지</option>
@@ -981,8 +976,10 @@
 
                 monthData.tasks.forEach(task => {
                     const taskId = `copy-task-${task.id}`;
+                    const dateId = `copy-date-${task.id}`;
                     html += `<div style="margin-left: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
                         <input type="checkbox" id="${taskId}" value="${task.id}" class="copy-task-checkbox" ${isFirstMonth ? 'checked' : ''}>
+                        <input type="date" id="${dateId}" class="copy-task-date" value="${task.dueDate}" style="width: 100px; padding: 4px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px;">
                         <label for="${taskId}" style="cursor: pointer; flex: 1; margin: 0; font-size: 12px;">
                             ${task.category} &gt; ${task.subcategory} - ${task.title}
                         </label>
@@ -1026,18 +1023,21 @@
                 return;
             }
 
-            const dueDate = document.getElementById('copyDate').value;
             const priorityOverride = document.getElementById('copyPriority').value;
-
-            if (!dueDate) {
-                showNotification('기한을 입력하세요', 'error');
-                return;
-            }
-
             const tasks = loadTasks();
-            const selectedTaskIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            let copiedCount = 0;
 
-            selectedTaskIds.forEach(taskId => {
+            checkboxes.forEach(checkbox => {
+                const taskId = parseInt(checkbox.value);
+                const dateInputId = `copy-date-${taskId}`;
+                const dueDateInput = document.getElementById(dateInputId);
+                const dueDate = dueDateInput ? dueDateInput.value : new Date().toISOString().split('T')[0];
+
+                if (!dueDate) {
+                    showNotification('기한을 입력하세요', 'error');
+                    return;
+                }
+
                 const originalTask = tasks.find(t => t.id === taskId);
                 if (originalTask) {
                     const newTask = {
@@ -1052,6 +1052,7 @@
                         recurringType: 'none'
                     };
                     tasks.push(newTask);
+                    copiedCount++;
                 }
             });
 
@@ -1061,7 +1062,7 @@
             initializeExistingTaskSelect();
             renderTasks();
             clearCopyForm();
-            showNotification(`${selectedTaskIds.length}개의 업무가 복사되었습니다`, 'success');
+            showNotification(`${copiedCount}개의 업무가 복사되었습니다`, 'success');
         }
 
         function clearCopyForm() {
