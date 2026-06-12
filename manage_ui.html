@@ -366,6 +366,43 @@
             color: #999;
         }
 
+        .month-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+            padding-bottom: 0;
+        }
+
+        .month-tab {
+            padding: 10px 15px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .month-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .month-tab:hover {
+            background: #e0e0e0;
+        }
+
+        .month-tab.active:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
         .filter-buttons {
             margin-bottom: 20px;
             display: flex;
@@ -506,6 +543,11 @@
             <div class="card">
                 <div class="card-title">📌 업무 목록</div>
 
+                <!-- 월별 탭 -->
+                <div class="month-tabs" id="monthTabs">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+
                 <div class="filter-buttons">
                     <button class="btn-primary" id="btn-all" onclick="filterTasks('all', this)">전체</button>
                     <button class="btn-secondary" id="btn-today" onclick="filterTasks('today', this)">📌 오늘</button>
@@ -528,6 +570,7 @@
         let currentFilter = 'all';
         let editingTaskId = null;
         let selectedCopyTasks = [];
+        let selectedMonth = null;
 
         // 날짜 범위 계산
         function getDateRanges() {
@@ -696,6 +739,7 @@
 
             saveTasks(tasks);
             initializeCategorySelect();
+            initializeMonthTabs();
             renderTasks();
             clearForm();
         }
@@ -727,6 +771,7 @@
                 const tasks = loadTasks();
                 const filtered = tasks.filter(t => t.id !== id);
                 saveTasks(filtered);
+                initializeMonthTabs();
                 renderTasks();
                 showNotification('업무가 삭제되었습니다', 'success');
             }
@@ -758,6 +803,52 @@
             }
         }
 
+        // 월별 탭 생성
+        function initializeMonthTabs() {
+            const tasks = loadTasks();
+            const monthsSet = new Set();
+
+            tasks.forEach(task => {
+                const date = new Date(task.dueDate);
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                monthsSet.add(monthKey);
+            });
+
+            const months = Array.from(monthsSet).sort().reverse(); // 최신순
+
+            const monthTabs = document.getElementById('monthTabs');
+            monthTabs.innerHTML = '';
+
+            if (months.length === 0) {
+                monthTabs.innerHTML = '<p style="color: #999; padding: 10px;">업무를 추가하면 월별 탭이 생성됩니다</p>';
+                return;
+            }
+
+            // 현재 월을 기본값으로 설정
+            const today = new Date();
+            const currentMonthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+            if (!selectedMonth) {
+                selectedMonth = months.includes(currentMonthKey) ? currentMonthKey : months[0];
+            }
+
+            months.forEach(monthKey => {
+                const [year, month] = monthKey.split('-');
+                const btn = document.createElement('button');
+                btn.className = `month-tab ${monthKey === selectedMonth ? 'active' : ''}`;
+                btn.textContent = `${year}년 ${parseInt(month)}월`;
+                btn.onclick = () => selectMonth(monthKey);
+                monthTabs.appendChild(btn);
+            });
+        }
+
+        // 월 선택
+        function selectMonth(monthKey) {
+            selectedMonth = monthKey;
+            initializeMonthTabs();
+            renderTasks();
+        }
+
         // 필터 변경
         function filterTasks(filter, btn) {
             currentFilter = filter;
@@ -781,17 +872,26 @@
                 return;
             }
 
-            // 필터링
+            // 월별 필터링
             let filteredTasks = tasks;
+            if (selectedMonth) {
+                filteredTasks = tasks.filter(task => {
+                    const date = new Date(task.dueDate);
+                    const taskMonthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    return taskMonthKey === selectedMonth;
+                });
+            }
+
+            // 추가 필터링 (전체/오늘/주중/월중)
             if (currentFilter !== 'all') {
-                filteredTasks = tasks.filter(task => getTaskCategory(task.dueDate) === currentFilter);
+                filteredTasks = filteredTasks.filter(task => getTaskCategory(task.dueDate) === currentFilter);
             }
 
             // 정렬
             const sorted = filteredTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
             if (sorted.length === 0) {
-                taskList.innerHTML = '<div class="empty-state"><p>해당하는 업무가 없습니다</p></div>';
+                taskList.innerHTML = '<div class="empty-state"><p>이 월에 해당하는 업무가 없습니다</p></div>';
                 return;
             }
 
@@ -944,6 +1044,7 @@
 
                     loadRecurringTasks();
                     initializeCategorySelect();
+                    initializeMonthTabs();
                     renderTasks();
                     showNotification('업무 데이터가 가져와졌습니다', 'success');
 
@@ -1146,6 +1247,7 @@
             saveTasks(tasks);
             initializeCategorySelect();
             initializeExistingTaskSelect();
+            initializeMonthTabs();
             renderTasks();
             clearCopyForm();
             showNotification(`${selectedTaskIds.length}개의 업무가 복사되었습니다`, 'success');
@@ -1163,6 +1265,7 @@
         loadRecurringTasks();
         initializeCategorySelect();
         initializeExistingTaskSelect();
+        initializeMonthTabs();
         renderTasks();
 
         // 오늘 날짜 기본값 설정
