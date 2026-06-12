@@ -905,27 +905,19 @@
                         categoryTasks.forEach(task => {
                             const priorityMap = { HIGH: '높음', MEDIUM: '중간', LOW: '낮음' };
                             const statusText = task.status === 'COMPLETED' ? '완료' : '진행중';
-                            html += `<div class="task-item" style="margin-bottom: 8px; margin-left: 26px;">
-                                <div class="task-header">
-                                    <div class="task-main">
-                                        <div class="task-title" style="color: ${task.status === 'COMPLETED' ? '#999' : '#333'}; text-decoration: ${task.status === 'COMPLETED' ? 'line-through' : 'none'}; font-size: 13px;">
-                                            ${task.title}
-                                        </div>
-                                        <div class="task-meta">
-                                            <span class="priority-badge priority-${task.priority.toLowerCase()}">
-                                                ${priorityMap[task.priority]}
-                                            </span>
-                                            <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}">
-                                                ${statusText}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="task-actions">
-                                        <button class="btn-secondary" onclick="editTask(${task.id})" style="background: #ffa94d; color: white;">수정</button>
-                                        <button class="btn-secondary" onclick="copyTask(${task.id})" style="background: #667eea; color: white;">복사</button>
-                                        <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
-                                    </div>
-                                </div>
+                            html += `<div style="margin-bottom: 8px; margin-left: 26px; display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f9f9f9; border-radius: 4px; border-left: 4px solid #667eea;">
+                                <span style="color: ${task.status === 'COMPLETED' ? '#999' : '#333'}; text-decoration: ${task.status === 'COMPLETED' ? 'line-through' : 'none'}; font-size: 13px; flex: 1;">
+                                    ${task.title}
+                                </span>
+                                <span class="priority-badge priority-${task.priority.toLowerCase()}" style="padding: 4px 10px; font-size: 11px;">
+                                    ${priorityMap[task.priority]}
+                                </span>
+                                <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}" style="padding: 4px 10px; font-size: 11px;">
+                                    ${statusText}
+                                </span>
+                                <button onclick="editTask(${task.id})" style="padding: 4px 10px; background: #ffa94d; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">수정</button>
+                                <button onclick="copyTask(${task.id})" style="padding: 4px 10px; background: #667eea; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">복사</button>
+                                <button onclick="deleteTask(${task.id})" style="padding: 4px 10px; background: #ff6b6b; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">삭제</button>
                             </div>`;
                         });
 
