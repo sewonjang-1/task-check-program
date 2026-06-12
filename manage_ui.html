@@ -856,55 +856,83 @@
                 return;
             }
 
-            const grouped = {};
+            // 날짜별로 그룹화
+            const groupedByDate = {};
             sorted.forEach(task => {
-                if (!grouped[task.category]) grouped[task.category] = {};
-                if (!grouped[task.category][task.subcategory]) grouped[task.category][task.subcategory] = [];
-                grouped[task.category][task.subcategory].push(task);
+                if (!groupedByDate[task.dueDate]) {
+                    groupedByDate[task.dueDate] = [];
+                }
+                groupedByDate[task.dueDate].push(task);
             });
 
             let html = '';
-            Object.keys(grouped).forEach(category => {
-                html += `<div class="category-group"><div class="category-name">🏷️ ${category}</div>`;
-                Object.keys(grouped[category]).forEach(subcategory => {
-                    const tasks = grouped[category][subcategory];
-                    const allCompleted = tasks.every(t => t.status === 'COMPLETED');
-                    html += `<div style="margin-left: 15px; margin-bottom: 15px;">
-                        <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" ${allCompleted ? 'checked' : ''}
-                                onchange="toggleSubcategoryComplete('${category}', '${subcategory}', this.checked)"
-                                style="width: 18px; height: 18px; cursor: pointer; margin: 0; padding: 0;">
-                            <span>📂 ${subcategory}</span>
-                        </div>`;
-                    tasks.forEach(task => {
-                        const priorityMap = { HIGH: '높음', MEDIUM: '중간', LOW: '낮음' };
-                        const statusText = task.status === 'COMPLETED' ? '완료' : '진행중';
-                        html += `<div class="task-item" style="margin-bottom: 8px; margin-left: 26px;">
-                            <div class="task-header">
-                                <div class="task-main">
-                                    <div class="task-title" style="color: ${task.status === 'COMPLETED' ? '#999' : '#333'}; text-decoration: ${task.status === 'COMPLETED' ? 'line-through' : 'none'};">
-                                        ${task.title}
-                                    </div>
-                                    <div class="task-meta">
-                                        <span class="priority-badge priority-${task.priority.toLowerCase()}">
-                                            ${priorityMap[task.priority]}
-                                        </span>
-                                        <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}">
-                                            ${statusText}
-                                        </span>
-                                        <span>${task.dueDate}</span>
-                                    </div>
-                                </div>
-                                <div class="task-actions">
-                                    <button class="btn-secondary" onclick="editTask(${task.id})" style="background: #ffa94d; color: white;">수정</button>
-                                    <button class="btn-secondary" onclick="copyTask(${task.id})" style="background: #667eea; color: white;">복사</button>
-                                    <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
-                                </div>
-                            </div>
-                        </div>`;
-                    });
-                    html += `</div>`;
+            Object.keys(groupedByDate).sort().forEach(dueDate => {
+                const tasksForDate = groupedByDate[dueDate];
+                const dateObj = new Date(dueDate);
+                const dateLabel = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+                const dayName = ['일', '월', '화', '수', '목', '금', '토'][dateObj.getDay()];
+
+                html += `<div style="margin-bottom: 20px; border-left: 4px solid #667eea; padding-left: 15px;">
+                    <div style="font-weight: 700; color: #667eea; margin-bottom: 12px; font-size: 14px;">
+                        📅 ${dateLabel} (${dayName}요일)
+                    </div>`;
+
+                // 날짜 내에서 대분류별로 그룹화
+                const groupedByCategory = {};
+                tasksForDate.forEach(task => {
+                    if (!groupedByCategory[task.category]) {
+                        groupedByCategory[task.category] = {};
+                    }
+                    if (!groupedByCategory[task.category][task.subcategory]) {
+                        groupedByCategory[task.category][task.subcategory] = [];
+                    }
+                    groupedByCategory[task.category][task.subcategory].push(task);
                 });
+
+                Object.keys(groupedByCategory).forEach(category => {
+                    Object.keys(groupedByCategory[category]).forEach(subcategory => {
+                        const categoryTasks = groupedByCategory[category][subcategory];
+                        const allCompleted = categoryTasks.every(t => t.status === 'COMPLETED');
+
+                        html += `<div style="margin-bottom: 12px; margin-left: 15px;">
+                            <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 12px; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" ${allCompleted ? 'checked' : ''}
+                                    onchange="toggleSubcategoryComplete('${category}', '${subcategory}', this.checked)"
+                                    style="width: 18px; height: 18px; cursor: pointer; margin: 0; padding: 0;">
+                                <span>🏷️ ${category} > 📂 ${subcategory}</span>
+                            </div>`;
+
+                        categoryTasks.forEach(task => {
+                            const priorityMap = { HIGH: '높음', MEDIUM: '중간', LOW: '낮음' };
+                            const statusText = task.status === 'COMPLETED' ? '완료' : '진행중';
+                            html += `<div class="task-item" style="margin-bottom: 8px; margin-left: 26px;">
+                                <div class="task-header">
+                                    <div class="task-main">
+                                        <div class="task-title" style="color: ${task.status === 'COMPLETED' ? '#999' : '#333'}; text-decoration: ${task.status === 'COMPLETED' ? 'line-through' : 'none'};">
+                                            ${task.title}
+                                        </div>
+                                        <div class="task-meta">
+                                            <span class="priority-badge priority-${task.priority.toLowerCase()}">
+                                                ${priorityMap[task.priority]}
+                                            </span>
+                                            <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}">
+                                                ${statusText}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="task-actions">
+                                        <button class="btn-secondary" onclick="editTask(${task.id})" style="background: #ffa94d; color: white;">수정</button>
+                                        <button class="btn-secondary" onclick="copyTask(${task.id})" style="background: #667eea; color: white;">복사</button>
+                                        <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
+                                    </div>
+                                </div>
+                            </div>`;
+                        });
+
+                        html += `</div>`;
+                    });
+                });
+
                 html += `</div>`;
             });
             taskList.innerHTML = html;
