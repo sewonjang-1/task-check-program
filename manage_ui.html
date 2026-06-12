@@ -556,6 +556,9 @@
                         📤 데이터 가져오기 (JSON)
                         <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importTasks(this.files[0])">
                     </label>
+                    <button class="btn-primary" onclick="sendIncompleteMailNow()" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
+                        📧 미완료 업무 메일 지금 발송
+                    </button>
                 </div>
 
                 <div style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 4px;">
@@ -563,6 +566,7 @@
                         <strong>💡 사용 방법:</strong><br>
                         • <strong>내보내기:</strong> 현재 업무를 JSON 파일로 다운로드<br>
                         • <strong>가져오기:</strong> 저장한 JSON 파일을 업로드하여 복구 또는 병합<br>
+                        • <strong>메일 발송:</strong> 오늘의 미완료 업무를 즉시 메일로 발송<br>
                         • 파일을 텍스트 에디터로 편집한 후 다시 가져올 수 있습니다
                     </p>
                 </div>
@@ -1265,6 +1269,37 @@
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
+        }
+
+        // 미완료 업무 메일 지금 발송
+        function sendIncompleteMailNow() {
+            showNotification('미완료 업무 메일을 발송하는 중...', 'success');
+
+            try {
+                // Windows에서 배치 파일 실행 (IE/Edge 레거시 모드에서만 작동)
+                const shell = new ActiveXObject("WScript.Shell");
+                const batchFile = "C:\\Users\\Admin\\Desktop\\2일차 과제-1\\incomplete_scheduler.bat";
+                shell.Run(batchFile, 0, false);
+
+                showNotification('✅ 미완료 업무 메일 발송 명령이 실행되었습니다!', 'success');
+            } catch (e) {
+                // 보안 제약으로 직접 실행 불가능한 경우
+                showAlert();
+            }
+        }
+
+        // 메일 발송 가이드 알림
+        function showAlert() {
+            const message = `⚠️ 보안 제약으로 자동 실행이 불가합니다.
+
+다음 파일을 수동으로 실행하세요:
+📍 C:\\Users\\Admin\\Desktop\\2일차 과제-1\\incomplete_scheduler.bat
+
+또는 PowerShell에서:
+cd "C:\\Users\\Admin\\Desktop\\2일차 과제-1"
+.\\incomplete_scheduler.bat`;
+
+            alert(message);
         }
 
         // 초기화
