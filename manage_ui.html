@@ -600,7 +600,22 @@
             }
         }
 
-        // 업무 완료 토글
+        // 소분류 완료 토글 (해당 소분류의 모든 업무)
+        function toggleSubcategoryComplete(category, subcategory, isChecked) {
+            const tasks = loadTasks();
+            const newStatus = isChecked ? 'COMPLETED' : 'PENDING';
+
+            tasks.forEach(task => {
+                if (task.category === category && task.subcategory === subcategory) {
+                    task.status = newStatus;
+                }
+            });
+
+            saveTasks(tasks);
+            renderTasks();
+        }
+
+        // 업무 완료 토글 (개별)
         function toggleComplete(id) {
             const tasks = loadTasks();
             const task = tasks.find(t => t.id === id);
@@ -663,21 +678,26 @@
 
                 Object.keys(grouped[category]).forEach(subcategory => {
                     const tasks = grouped[category][subcategory];
+                    // 이 소분류의 모든 업무가 완료되었는지 확인
+                    const allCompleted = tasks.every(t => t.status === 'COMPLETED');
 
                     html += `<div style="margin-left: 15px; margin-bottom: 15px;">
-                        <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 13px;">📂 ${subcategory}</div>`;
+                        <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" ${allCompleted ? 'checked' : ''}
+                                onchange="toggleSubcategoryComplete('${category}', '${subcategory}', this.checked)"
+                                style="width: 18px; height: 18px; cursor: pointer; margin: 0; padding: 0;">
+                            <span>📂 ${subcategory}</span>
+                        </div>`;
 
                     tasks.forEach(task => {
                         const priorityMap = { HIGH: '높음', MEDIUM: '중간', LOW: '낮음' };
                         const statusText = task.status === 'COMPLETED' ? '완료' : '진행중';
 
                         html += `
-                            <div class="task-item" style="margin-bottom: 8px;">
+                            <div class="task-item" style="margin-bottom: 8px; margin-left: 26px;">
                                 <div class="task-header">
                                     <div class="task-main">
-                                        <div class="task-title">
-                                            <input type="checkbox" ${task.status === 'COMPLETED' ? 'checked' : ''}
-                                                onchange="toggleComplete(${task.id})">
+                                        <div class="task-title" style="color: ${task.status === 'COMPLETED' ? '#999' : '#333'}; text-decoration: ${task.status === 'COMPLETED' ? 'line-through' : 'none'};">
                                             ${task.title}
                                         </div>
                                         <div class="task-meta">
