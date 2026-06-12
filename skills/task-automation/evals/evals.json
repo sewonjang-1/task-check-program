@@ -1,0 +1,43 @@
+{
+  "skill_name": "task-automation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "업무를 자동으로 정리하여 매일 메일로 보내주는 시스템을 만들어줄래? 오늘, 주중, 월중으로 구분해서 보여줬으면 좋겠어.",
+      "expected_output": "완전한 업무 자동화 시스템이 구성되며, 초기화 스크립트 실행 후 모든 필요한 파일이 생성됨",
+      "files": [],
+      "expectations": [
+        "SKILL.md가 명확한 사용 방법을 제시함",
+        "초기화 스크립트(initialize_system.ps1)가 제공됨",
+        "SMTP 설정 방법이 설명됨",
+        "오늘/주중/월중 자동 분류 기능이 설명됨",
+        "Windows Task Scheduler 설정 방법이 포함됨"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "나는 프로젝트 관리를 더 효율적으로 하고 싶은데, 매일 자동으로 업무 현황을 받아볼 수 있는 시스템이 필요해. Gmail로 메일을 발송할 수 있도록 해줄 수 있어?",
+      "expected_output": "Gmail 설정 절차가 명확하고, 이메일 설정 템플릿이 제공됨",
+      "files": [],
+      "expectations": [
+        "Gmail 앱 비밀번호 생성 방법이 설명됨",
+        "email_config.json 설정 예제가 포함됨",
+        "Naver, Kakao 등 다른 이메일 서비스도 설명됨",
+        "SMTP 설정 가이드가 상세함"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "일일 보고서를 보기 좋게 만들어주고, 웹에서 업무를 추가할 수 있도록 해줄 수 있어? 그리고 우선순위도 있었으면 좋겠어.",
+      "expected_output": "웹 UI와 HTML 보고서 템플릿이 제공되며, 우선순위 기능이 포함됨",
+      "files": [],
+      "expectations": [
+        "manage_ui.html이 웹 인터페이스를 제공함",
+        "daily_report.html이 보고서 형식을 보여줌",
+        "HIGH/MEDIUM/LOW 우선순위 정렬이 설명됨",
+        "카테고리별 필터링 기능이 설명됨",
+        "HTML 이메일 형식이 명시됨"
+      ]
+    }
+  ]
+}
