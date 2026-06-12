@@ -39,17 +39,48 @@
             opacity: 0.9;
         }
 
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
+        /* 콘텐츠 탭 스타일 */
+        .content-tabs {
+            display: flex;
+            gap: 5px;
             margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            overflow-x: auto;
+            padding-bottom: 0;
+        }
+
+        .content-tab {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .content-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .content-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .content-tab.active:hover {
+            background: white;
         }
 
         .card {
             background: white;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             padding: 25px;
         }
 
@@ -98,44 +129,6 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .subtask-add {
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-
-        .subtask-item {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 8px;
-            align-items: center;
-        }
-
-        .subtask-item input {
-            flex: 1;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-        }
-
-        .subtask-item select {
-            padding: 6px;
-            width: 100px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-        }
-
-        .btn-remove-subtask {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
         .button-group {
             display: flex;
             gap: 10px;
@@ -143,7 +136,6 @@
         }
 
         button {
-            flex: 1;
             padding: 12px;
             border: none;
             border-radius: 4px;
@@ -156,6 +148,7 @@
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            flex: 1;
         }
 
         .btn-primary:hover {
@@ -166,6 +159,7 @@
         .btn-secondary {
             background: #f0f0f0;
             color: #333;
+            flex: 1;
         }
 
         .btn-secondary:hover {
@@ -182,14 +176,59 @@
             background: #ff5252;
         }
 
-        .btn-add-subtask {
-            background: #667eea;
-            color: white;
-            padding: 6px 12px;
-            width: auto;
-            margin-top: 8px;
+        /* 월별 탭 스타일 */
+        .month-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+            padding-bottom: 0;
         }
 
+        .month-tab {
+            padding: 10px 15px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .month-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .month-tab:hover {
+            background: #e0e0e0;
+        }
+
+        .month-tab.active:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* 필터 버튼 */
+        .filter-buttons {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-buttons button {
+            padding: 8px 15px;
+            font-size: 12px;
+            flex: 0;
+            width: auto;
+        }
+
+        /* 업무 목록 스타일 */
         .task-list {
             max-width: 100%;
         }
@@ -229,17 +268,6 @@
         .task-title {
             font-weight: 500;
             margin-bottom: 3px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .task-title input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            margin: 0;
-            padding: 0;
         }
 
         .task-meta {
@@ -255,7 +283,6 @@
             border-radius: 4px;
             font-size: 11px;
             font-weight: 500;
-            margin-right: 5px;
         }
 
         .priority-high {
@@ -293,39 +320,27 @@
             gap: 5px;
         }
 
-        .subtasks-list {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #e0e0e0;
+        .task-actions button {
+            padding: 6px 12px;
+            font-size: 12px;
         }
 
-        .subtask-item-display {
-            background: white;
-            padding: 8px 12px;
-            margin-bottom: 6px;
-            border-radius: 4px;
-            border-left: 3px solid #667eea;
-            font-size: 13px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .subtask-info {
-            flex: 1;
-        }
-
-        .subtask-name {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .subtask-type {
-            font-size: 11px;
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
             color: #999;
-            margin-top: 2px;
         }
 
+        /* 탭 콘텐츠 */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 알림 */
         .notification {
             position: fixed;
             bottom: 20px;
@@ -333,7 +348,7 @@
             background: white;
             padding: 15px 20px;
             border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: none;
             z-index: 1000;
         }
@@ -360,75 +375,31 @@
             border-left: 4px solid #ff6b6b;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-        }
-
-        .month-tabs {
-            display: flex;
-            gap: 5px;
+        /* 기존 업무 복사 - 월별 목록 */
+        #tasksListByMonth {
+            max-height: 300px;
+            overflow-y: auto;
             margin-bottom: 15px;
-            border-bottom: 2px solid #ddd;
-            overflow-x: auto;
-            padding-bottom: 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background: #fafafa;
         }
 
-        .month-tab {
-            padding: 10px 15px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 6px 6px 0 0;
+        .copy-task-checkbox {
+            width: 18px;
+            height: 18px;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            color: #666;
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-
-        .month-tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-bottom: 3px solid #667eea;
-            margin-bottom: -2px;
-        }
-
-        .month-tab:hover {
-            background: #e0e0e0;
-        }
-
-        .month-tab.active:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .filter-buttons {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .filter-buttons button {
-            padding: 8px 15px;
-            font-size: 12px;
-            flex: 0;
-            width: auto;
-        }
-
-        @media (max-width: 1200px) {
-            .main-content {
-                grid-template-columns: 1fr 1fr;
-            }
+            margin-right: 8px;
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-
             .header h1 {
                 font-size: 24px;
+            }
+
+            .content-tabs {
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -438,17 +409,39 @@
         <div class="header">
             <h1>📋 업무 관리 시스템 (계층 구조)</h1>
             <p>대분류 > 소분류 > 상세내용로 체계적으로 관리</p>
-            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
-                <button onclick="exportTasks()" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 13px;">📥 데이터 내보내기</button>
-                <label style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; margin: 0;">
-                    📤 데이터 가져오기
-                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importTasks(this.files[0])">
-                </label>
+        </div>
+
+        <!-- 콘텐츠 탭 -->
+        <div class="content-tabs">
+            <button class="content-tab active" onclick="switchTab('tasks', this)">📌 업무목록</button>
+            <button class="content-tab" onclick="switchTab('add', this)">➕ 새 업무 추가</button>
+            <button class="content-tab" onclick="switchTab('copy', this)">📋 기존 업무 복사</button>
+            <button class="content-tab" onclick="switchTab('data', this)">💾 데이터 관리</button>
+        </div>
+
+        <!-- 업무 목록 탭 -->
+        <div id="tab-tasks" class="tab-content active">
+            <div class="card">
+                <div class="card-title">📌 업무 목록</div>
+
+                <!-- 월별 탭 -->
+                <div class="month-tabs" id="monthTabs"></div>
+
+                <div class="filter-buttons">
+                    <button class="btn-primary" id="btn-all" onclick="filterTasks('all', this)">전체</button>
+                    <button class="btn-secondary" id="btn-today" onclick="filterTasks('today', this)">📌 오늘</button>
+                    <button class="btn-secondary" id="btn-week" onclick="filterTasks('week', this)">📅 주중</button>
+                    <button class="btn-secondary" id="btn-month" onclick="filterTasks('month', this)">📆 월중</button>
+                </div>
+
+                <div id="taskList" class="task-list">
+                    <div class="empty-state"><p>업무를 추가해보세요</p></div>
+                </div>
             </div>
         </div>
 
-        <div class="main-content">
-            <!-- 새 업무 추가 -->
+        <!-- 새 업무 추가 탭 -->
+        <div id="tab-add" class="tab-content">
             <div class="card">
                 <div class="card-title">➕ 새 업무 추가</div>
 
@@ -503,8 +496,10 @@
                     <button class="btn-secondary" onclick="clearForm()">초기화</button>
                 </div>
             </div>
+        </div>
 
-            <!-- 기존 업무에서 일괄 복사 -->
+        <!-- 기존 업무에서 복사 탭 -->
+        <div id="tab-copy" class="tab-content">
             <div class="card">
                 <div class="card-title">📋 기존 업무에서 일괄 복사</div>
                 <p style="font-size: 12px; color: #999; margin-bottom: 15px;">월별로 기존 업무를 선택하여 새 기한으로 복사합니다</p>
@@ -524,7 +519,7 @@
                     </select>
                 </div>
 
-                <div id="tasksListByMonth" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">
+                <div id="tasksListByMonth">
                     <p style="color: #999; text-align: center; padding: 20px;">업무를 불러오는 중...</p>
                 </div>
 
@@ -538,27 +533,31 @@
                     <button class="btn-secondary" onclick="clearCopyForm()">초기화</button>
                 </div>
             </div>
+        </div>
 
-            <!-- 업무 목록 -->
+        <!-- 데이터 관리 탭 -->
+        <div id="tab-data" class="tab-content">
             <div class="card">
-                <div class="card-title">📌 업무 목록</div>
+                <div class="card-title">💾 데이터 관리</div>
+                <p style="font-size: 12px; color: #999; margin-bottom: 20px;">업무 데이터를 내보내거나 가져옵니다</p>
 
-                <!-- 월별 탭 -->
-                <div class="month-tabs" id="monthTabs">
-                    <!-- 동적으로 생성됨 -->
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn-primary" onclick="exportTasks()" style="background: #667eea;">
+                        📥 데이터 내보내기 (JSON)
+                    </button>
+                    <label style="display: flex; align-items: center; justify-content: center; padding: 12px; background: #667eea; color: white; border-radius: 4px; cursor: pointer; font-weight: 500; transition: all 0.3s;">
+                        📤 데이터 가져오기 (JSON)
+                        <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importTasks(this.files[0])">
+                    </label>
                 </div>
 
-                <div class="filter-buttons">
-                    <button class="btn-primary" id="btn-all" onclick="filterTasks('all', this)">전체</button>
-                    <button class="btn-secondary" id="btn-today" onclick="filterTasks('today', this)">📌 오늘</button>
-                    <button class="btn-secondary" id="btn-week" onclick="filterTasks('week', this)">📅 주중</button>
-                    <button class="btn-secondary" id="btn-month" onclick="filterTasks('month', this)">📆 월중</button>
-                </div>
-
-                <div id="taskList" class="task-list">
-                    <div class="empty-state">
-                        <p>업무를 추가해보세요</p>
-                    </div>
+                <div style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 4px;">
+                    <p style="font-size: 12px; color: #666; line-height: 1.6;">
+                        <strong>💡 사용 방법:</strong><br>
+                        • <strong>내보내기:</strong> 현재 업무를 JSON 파일로 다운로드<br>
+                        • <strong>가져오기:</strong> 저장한 JSON 파일을 업로드하여 복구 또는 병합<br>
+                        • 파일을 텍스트 에디터로 편집한 후 다시 가져올 수 있습니다
+                    </p>
                 </div>
             </div>
         </div>
@@ -571,77 +570,69 @@
         let editingTaskId = null;
         let selectedCopyTasks = [];
         let selectedMonth = null;
+        let currentTab = 'tasks';
+
+        // 탭 전환
+        function switchTab(tabName, btn) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if (targetTab) targetTab.classList.add('active');
+            document.querySelectorAll('.content-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
 
         // 날짜 범위 계산
         function getDateRanges() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-
             const tomorrow = new Date(today);
             tomorrow.setDate(tomorrow.getDate() + 1);
-
             const weekEnd = new Date(today);
             weekEnd.setDate(weekEnd.getDate() + 6);
-
             const monthEnd = new Date(today);
             monthEnd.setDate(monthEnd.getMonth() + 1);
             monthEnd.setDate(0);
-
             return { today, tomorrow, weekEnd, monthEnd };
         }
 
         function getTaskCategory(dueDate) {
             const taskDate = new Date(dueDate);
             const ranges = getDateRanges();
-
-            if (taskDate.toDateString() === ranges.today.toDateString()) {
-                return 'today';
-            } else if (taskDate <= ranges.weekEnd && taskDate > ranges.today) {
-                return 'week';
-            } else if (taskDate <= ranges.monthEnd && taskDate > ranges.weekEnd) {
-                return 'month';
-            }
+            if (taskDate.toDateString() === ranges.today.toDateString()) return 'today';
+            else if (taskDate <= ranges.weekEnd && taskDate > ranges.today) return 'week';
+            else if (taskDate <= ranges.monthEnd && taskDate > ranges.weekEnd) return 'month';
             return 'overdue';
         }
 
-        // 로컬 스토리지에서 업무 불러오기
+        // 로컬 스토리지
         function loadTasks() {
             const tasks = localStorage.getItem('tasks');
             return tasks ? JSON.parse(tasks) : [];
         }
 
-        // 업무 저장
         function saveTasks(tasks) {
             localStorage.setItem('tasks', JSON.stringify(tasks));
         }
 
-        // 기존 대분류 목록 가져오기
+        // 대분류 목록
         function getCategoryList() {
             const tasks = loadTasks();
             const categories = [...new Set(tasks.map(t => t.category))];
             return categories.sort();
         }
 
-        // 대분류 드롭다운 초기화
         function initializeCategorySelect() {
             const categorySelect = document.getElementById('categorySelect');
             const categoryNew = document.getElementById('categoryNew');
             const categories = getCategoryList();
-
-            // 기존 선택지 제거 (첫 두 옵션 제외)
-            while (categorySelect.options.length > 2) {
-                categorySelect.remove(2);
-            }
-
-            // 기존 대분류 추가
+            while (categorySelect.options.length > 2) categorySelect.remove(2);
             categories.forEach(cat => {
                 const option = document.createElement('option');
                 option.value = cat;
                 option.textContent = cat;
                 categorySelect.appendChild(option);
             });
-
-            // 변경 이벤트
             categorySelect.addEventListener('change', function() {
                 if (this.value === 'new') {
                     categoryNew.style.display = 'block';
@@ -651,34 +642,6 @@
                     categoryNew.value = '';
                 }
             });
-        }
-
-        // 업무 수정
-        function editTask(id) {
-            const tasks = loadTasks();
-            const task = tasks.find(t => t.id === id);
-
-            if (task) {
-                editingTaskId = id;
-
-                // 폼에 데이터 채우기
-                document.getElementById('categorySelect').value = task.category;
-                document.getElementById('categoryNew').style.display = 'none';
-                document.getElementById('categoryNew').value = '';
-                document.getElementById('subcategory').value = task.subcategory;
-                document.getElementById('title').value = task.title === '(상세내용 없음)' ? '' : task.title;
-                document.getElementById('priority').value = task.priority;
-                document.getElementById('dueDate').value = task.dueDate;
-                document.getElementById('recurringType').value = task.recurringType || 'none';
-
-                // 버튼 텍스트 변경
-                const submitBtn = document.querySelector('.button-group .btn-primary');
-                submitBtn.textContent = '수정 완료';
-                submitBtn.style.background = 'linear-gradient(135deg, #ffa94d 0%, #ff922b 100%)';
-
-                showNotification('업무 정보를 수정하고 "수정 완료" 버튼을 클릭하세요', 'success');
-                document.getElementById('subcategory').focus();
-            }
         }
 
         // 업무 추가/수정
@@ -691,12 +654,8 @@
             const dueDate = document.getElementById('dueDate').value;
             const recurringType = document.getElementById('recurringType').value;
 
-            // 새로운 대분류 입력
-            if (category === 'new') {
-                category = categoryNew;
-            }
+            if (category === 'new') category = categoryNew;
 
-            // 필수 항목 검증
             if (!category || !subcategory || !priority || !dueDate) {
                 showNotification('대분류, 소분류, 우선순위, 기한은 필수입니다', 'error');
                 return;
@@ -705,7 +664,6 @@
             const tasks = loadTasks();
 
             if (editingTaskId) {
-                // 기존 업무 수정
                 const taskIndex = tasks.findIndex(t => t.id === editingTaskId);
                 if (taskIndex !== -1) {
                     tasks[taskIndex] = {
@@ -721,7 +679,6 @@
                 }
                 showNotification('업무가 수정되었습니다', 'success');
             } else {
-                // 새 업무 추가
                 const newTask = {
                     id: Date.now(),
                     category,
@@ -740,17 +697,35 @@
             saveTasks(tasks);
             initializeCategorySelect();
             initializeMonthTabs();
+            initializeExistingTaskSelect();
             renderTasks();
             clearForm();
+        }
+
+        // 업무 수정
+        function editTask(id) {
+            const tasks = loadTasks();
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                editingTaskId = id;
+                document.getElementById('categorySelect').value = task.category;
+                document.getElementById('categoryNew').style.display = 'none';
+                document.getElementById('categoryNew').value = '';
+                document.getElementById('subcategory').value = task.subcategory;
+                document.getElementById('title').value = task.title === '(상세내용 없음)' ? '' : task.title;
+                document.getElementById('priority').value = task.priority;
+                document.getElementById('dueDate').value = task.dueDate;
+                document.getElementById('recurringType').value = task.recurringType || 'none';
+                switchTab('add', document.querySelectorAll('.content-tab')[1]);
+                showNotification('업무를 수정하고 "업무 추가" 버튼을 클릭하세요', 'success');
+            }
         }
 
         // 업무 복사
         function copyTask(id) {
             const tasks = loadTasks();
             const originalTask = tasks.find(t => t.id === id);
-
             if (originalTask) {
-                // 폼에 데이터 채우기
                 document.getElementById('categorySelect').value = originalTask.category;
                 document.getElementById('categoryNew').style.display = 'none';
                 document.getElementById('categoryNew').value = '';
@@ -759,9 +734,8 @@
                 document.getElementById('priority').value = originalTask.priority;
                 document.getElementById('dueDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('recurringType').value = originalTask.recurringType || 'none';
-
-                showNotification('업무가 복사되었습니다. 필요하면 수정 후 추가하세요.', 'success');
-                document.getElementById('categorySelect').focus();
+                switchTab('add', document.querySelectorAll('.content-tab')[1]);
+                showNotification('업무가 복사되었습니다', 'success');
             }
         }
 
@@ -772,27 +746,26 @@
                 const filtered = tasks.filter(t => t.id !== id);
                 saveTasks(filtered);
                 initializeMonthTabs();
+                initializeExistingTaskSelect();
                 renderTasks();
                 showNotification('업무가 삭제되었습니다', 'success');
             }
         }
 
-        // 소분류 완료 토글 (해당 소분류의 모든 업무)
+        // 소분류 완료 토글
         function toggleSubcategoryComplete(category, subcategory, isChecked) {
             const tasks = loadTasks();
             const newStatus = isChecked ? 'COMPLETED' : 'PENDING';
-
             tasks.forEach(task => {
                 if (task.category === category && task.subcategory === subcategory) {
                     task.status = newStatus;
                 }
             });
-
             saveTasks(tasks);
             renderTasks();
         }
 
-        // 업무 완료 토글 (개별)
+        // 업무 완료 토글
         function toggleComplete(id) {
             const tasks = loadTasks();
             const task = tasks.find(t => t.id === id);
@@ -803,35 +776,27 @@
             }
         }
 
-        // 월별 탭 생성
+        // 월별 탭 초기화
         function initializeMonthTabs() {
             const tasks = loadTasks();
             const monthsSet = new Set();
-
             tasks.forEach(task => {
                 const date = new Date(task.dueDate);
                 const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
                 monthsSet.add(monthKey);
             });
-
-            const months = Array.from(monthsSet).sort().reverse(); // 최신순
-
+            const months = Array.from(monthsSet).sort().reverse();
             const monthTabs = document.getElementById('monthTabs');
             monthTabs.innerHTML = '';
-
             if (months.length === 0) {
                 monthTabs.innerHTML = '<p style="color: #999; padding: 10px;">업무를 추가하면 월별 탭이 생성됩니다</p>';
                 return;
             }
-
-            // 현재 월을 기본값으로 설정
             const today = new Date();
             const currentMonthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-
             if (!selectedMonth) {
                 selectedMonth = months.includes(currentMonthKey) ? currentMonthKey : months[0];
             }
-
             months.forEach(monthKey => {
                 const [year, month] = monthKey.split('-');
                 const btn = document.createElement('button');
@@ -842,7 +807,6 @@
             });
         }
 
-        // 월 선택
         function selectMonth(monthKey) {
             selectedMonth = monthKey;
             initializeMonthTabs();
@@ -872,7 +836,6 @@
                 return;
             }
 
-            // 월별 필터링
             let filteredTasks = tasks;
             if (selectedMonth) {
                 filteredTasks = tasks.filter(task => {
@@ -882,12 +845,10 @@
                 });
             }
 
-            // 추가 필터링 (전체/오늘/주중/월중)
             if (currentFilter !== 'all') {
                 filteredTasks = filteredTasks.filter(task => getTaskCategory(task.dueDate) === currentFilter);
             }
 
-            // 정렬
             const sorted = filteredTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
             if (sorted.length === 0) {
@@ -895,7 +856,6 @@
                 return;
             }
 
-            // 대분류 > 소분류별 그룹화
             const grouped = {};
             sorted.forEach(task => {
                 if (!grouped[task.category]) grouped[task.category] = {};
@@ -905,14 +865,10 @@
 
             let html = '';
             Object.keys(grouped).forEach(category => {
-                html += `<div class="category-group">
-                    <div class="category-name">🏷️ ${category}</div>`;
-
+                html += `<div class="category-group"><div class="category-name">🏷️ ${category}</div>`;
                 Object.keys(grouped[category]).forEach(subcategory => {
                     const tasks = grouped[category][subcategory];
-                    // 이 소분류의 모든 업무가 완료되었는지 확인
                     const allCompleted = tasks.every(t => t.status === 'COMPLETED');
-
                     html += `<div style="margin-left: 15px; margin-bottom: 15px;">
                         <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
                             <input type="checkbox" ${allCompleted ? 'checked' : ''}
@@ -920,50 +876,43 @@
                                 style="width: 18px; height: 18px; cursor: pointer; margin: 0; padding: 0;">
                             <span>📂 ${subcategory}</span>
                         </div>`;
-
                     tasks.forEach(task => {
                         const priorityMap = { HIGH: '높음', MEDIUM: '중간', LOW: '낮음' };
                         const statusText = task.status === 'COMPLETED' ? '완료' : '진행중';
-
-                        html += `
-                            <div class="task-item" style="margin-bottom: 8px; margin-left: 26px;">
-                                <div class="task-header">
-                                    <div class="task-main">
-                                        <div class="task-title" style="color: ${task.status === 'COMPLETED' ? '#999' : '#333'}; text-decoration: ${task.status === 'COMPLETED' ? 'line-through' : 'none'};">
-                                            ${task.title}
-                                        </div>
-                                        <div class="task-meta">
-                                            <span class="priority-badge priority-${task.priority.toLowerCase()}">
-                                                ${priorityMap[task.priority]}
-                                            </span>
-                                            <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}">
-                                                ${statusText}
-                                            </span>
-                                            <span>${task.dueDate}</span>
-                                        </div>
+                        html += `<div class="task-item" style="margin-bottom: 8px; margin-left: 26px;">
+                            <div class="task-header">
+                                <div class="task-main">
+                                    <div class="task-title" style="color: ${task.status === 'COMPLETED' ? '#999' : '#333'}; text-decoration: ${task.status === 'COMPLETED' ? 'line-through' : 'none'};">
+                                        ${task.title}
                                     </div>
-                                    <div class="task-actions">
-                                        <button class="btn-secondary" onclick="editTask(${task.id})" style="background: #ffa94d; color: white; padding: 6px 12px;">수정</button>
-                                        <button class="btn-secondary" onclick="copyTask(${task.id})" style="background: #667eea; color: white; padding: 6px 12px;">복사</button>
-                                        <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
+                                    <div class="task-meta">
+                                        <span class="priority-badge priority-${task.priority.toLowerCase()}">
+                                            ${priorityMap[task.priority]}
+                                        </span>
+                                        <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}">
+                                            ${statusText}
+                                        </span>
+                                        <span>${task.dueDate}</span>
                                     </div>
                                 </div>
-                            </div>`;
+                                <div class="task-actions">
+                                    <button class="btn-secondary" onclick="editTask(${task.id})" style="background: #ffa94d; color: white;">수정</button>
+                                    <button class="btn-secondary" onclick="copyTask(${task.id})" style="background: #667eea; color: white;">복사</button>
+                                    <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
+                                </div>
+                            </div>
+                        </div>`;
                     });
-
                     html += `</div>`;
                 });
-
                 html += `</div>`;
             });
-
             taskList.innerHTML = html;
         }
 
         // 폼 초기화
         function clearForm() {
             editingTaskId = null;
-
             document.getElementById('categorySelect').value = '';
             document.getElementById('categoryNew').value = '';
             document.getElementById('categoryNew').style.display = 'none';
@@ -971,161 +920,11 @@
             document.getElementById('title').value = '';
             document.getElementById('priority').value = '';
             document.getElementById('recurringType').value = 'none';
-
-            // 오늘 날짜로 설정
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('dueDate').value = today;
-
-            // 버튼 텍스트 원래대로 복구
-            const submitBtn = document.querySelector('.button-group .btn-primary');
-            submitBtn.textContent = '업무 추가';
-            submitBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
 
-        // 데이터 내보내기 (JSON 파일로 다운로드)
-        function exportTasks() {
-            const tasks = loadTasks();
-            const dataStr = JSON.stringify(tasks, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `tasks_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            showNotification('업무 데이터가 다운로드되었습니다', 'success');
-        }
-
-        // 데이터 가져오기 (JSON 파일 업로드)
-        function importTasks(file) {
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-
-                    if (!Array.isArray(importedData)) {
-                        throw new Error('Invalid file format');
-                    }
-
-                    // 기존 데이터와 병합할지 덮어쓸지 선택
-                    const currentTasks = loadTasks();
-
-                    if (currentTasks.length > 0) {
-                        const overwrite = confirm(
-                            '기존 데이터가 있습니다.\n\n' +
-                            '확인: 새 데이터로 완전히 덮어쓰기\n' +
-                            '취소: 새 데이터와 기존 데이터 병합'
-                        );
-
-                        if (overwrite) {
-                            saveTasks(importedData);
-                        } else {
-                            const merged = [...currentTasks];
-                            importedData.forEach(newTask => {
-                                const exists = merged.some(t =>
-                                    t.category === newTask.category &&
-                                    t.subcategory === newTask.subcategory &&
-                                    t.title === newTask.title &&
-                                    t.dueDate === newTask.dueDate
-                                );
-                                if (!exists) {
-                                    merged.push(newTask);
-                                }
-                            });
-                            saveTasks(merged);
-                        }
-                    } else {
-                        saveTasks(importedData);
-                    }
-
-                    loadRecurringTasks();
-                    initializeCategorySelect();
-                    initializeMonthTabs();
-                    renderTasks();
-                    showNotification('업무 데이터가 가져와졌습니다', 'success');
-
-                    // 파일 입력 초기화
-                    document.getElementById('importFile').value = '';
-                } catch (error) {
-                    showNotification('파일 형식이 올바르지 않습니다', 'error');
-                    console.error('Import error:', error);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // 알림 표시
-        function showNotification(message, type) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification show ${type}`;
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // 반복 업무 자동 로드
-        function loadRecurringTasks() {
-            const tasks = loadTasks();
-            const today = new Date().toISOString().split('T')[0];
-            const todayDate = new Date(today);
-
-            tasks.forEach(task => {
-                if (!task.isRecurring || task.recurringType === 'none') return;
-
-                const dueDate = new Date(task.dueDate);
-
-                // 반복 업무 확인
-                let shouldAdd = false;
-
-                if (task.recurringType === 'monthly') {
-                    // 매달 같은 날짜
-                    if (dueDate.getDate() === todayDate.getDate()) {
-                        shouldAdd = true;
-                    }
-                } else if (task.recurringType === 'weekly') {
-                    // 매주 같은 요일
-                    if (dueDate.getDay() === todayDate.getDay()) {
-                        shouldAdd = true;
-                    }
-                } else if (task.recurringType === 'daily') {
-                    // 매일
-                    shouldAdd = true;
-                }
-
-                // 오늘 날짜의 업무가 이미 있는지 확인
-                const isDuplicate = tasks.some(t =>
-                    t.category === task.category &&
-                    t.subcategory === task.subcategory &&
-                    t.title === task.title &&
-                    t.dueDate === today
-                );
-
-                // 새로운 업무 추가
-                if (shouldAdd && !isDuplicate) {
-                    const newTask = {
-                        id: Date.now(),
-                        category: task.category,
-                        subcategory: task.subcategory,
-                        title: task.title,
-                        priority: task.priority,
-                        dueDate: today,
-                        status: 'PENDING',
-                        isRecurring: true,
-                        recurringType: task.recurringType
-                    };
-                    tasks.push(newTask);
-                }
-            });
-
-            saveTasks(tasks);
-        }
-
-        // 월별 업무 목록 렌더링
+        // 기존 업무에서 일괄 복사
         function initializeExistingTaskSelect() {
             const tasks = loadTasks();
             const container = document.getElementById('tasksListByMonth');
@@ -1135,7 +934,6 @@
                 return;
             }
 
-            // 월별로 그룹화
             const tasksByMonth = {};
             tasks.forEach(task => {
                 const date = new Date(task.dueDate);
@@ -1148,7 +946,6 @@
                 tasksByMonth[monthKey].tasks.push(task);
             });
 
-            // 최신순으로 정렬
             const sortedMonths = Object.keys(tasksByMonth).sort().reverse();
 
             let html = '';
@@ -1177,36 +974,29 @@
             container.innerHTML = html;
         }
 
-        // 전월 모두 선택
         function selectAllTasksInMonth() {
             const tasks = loadTasks();
             if (tasks.length === 0) return;
-
-            // 가장 최근 월의 업무만 선택
             const date = new Date();
             const year = date.getFullYear();
             const month = date.getMonth() + 1;
-
             const checkboxes = document.querySelectorAll('.copy-task-checkbox');
             const recentMonthTasks = tasks.filter(t => {
                 const taskDate = new Date(t.dueDate);
                 return taskDate.getFullYear() === year && taskDate.getMonth() + 1 === month;
             });
-
             checkboxes.forEach(checkbox => {
                 const isInRecentMonth = recentMonthTasks.some(t => t.id === parseInt(checkbox.value));
                 checkbox.checked = isInRecentMonth;
             });
         }
 
-        // 선택 해제
         function clearMonthSelection() {
             document.querySelectorAll('.copy-task-checkbox').forEach(checkbox => {
                 checkbox.checked = false;
             });
         }
 
-        // 선택된 여러 업무 복사
         function copyMultipleTasks() {
             const checkboxes = document.querySelectorAll('.copy-task-checkbox:checked');
 
@@ -1246,14 +1036,13 @@
 
             saveTasks(tasks);
             initializeCategorySelect();
-            initializeExistingTaskSelect();
             initializeMonthTabs();
+            initializeExistingTaskSelect();
             renderTasks();
             clearCopyForm();
             showNotification(`${selectedTaskIds.length}개의 업무가 복사되었습니다`, 'success');
         }
 
-        // 기존 업무 폼 초기화
         function clearCopyForm() {
             document.getElementById('copyDate').value = '';
             document.getElementById('copyPriority').value = '';
@@ -1261,14 +1050,148 @@
             selectedCopyTasks = [];
         }
 
+        // 데이터 내보내기
+        function exportTasks() {
+            const tasks = loadTasks();
+            const dataStr = JSON.stringify(tasks, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `tasks_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showNotification('업무 데이터가 다운로드되었습니다', 'success');
+        }
+
+        // 데이터 가져오기
+        function importTasks(file) {
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+
+                    if (!Array.isArray(importedData)) {
+                        throw new Error('Invalid file format');
+                    }
+
+                    const currentTasks = loadTasks();
+
+                    if (currentTasks.length > 0) {
+                        const overwrite = confirm(
+                            '기존 데이터가 있습니다.\n\n' +
+                            '확인: 새 데이터로 완전히 덮어쓰기\n' +
+                            '취소: 새 데이터와 기존 데이터 병합'
+                        );
+
+                        if (overwrite) {
+                            saveTasks(importedData);
+                        } else {
+                            const merged = [...currentTasks];
+                            importedData.forEach(newTask => {
+                                const exists = merged.some(t =>
+                                    t.category === newTask.category &&
+                                    t.subcategory === newTask.subcategory &&
+                                    t.title === newTask.title &&
+                                    t.dueDate === newTask.dueDate
+                                );
+                                if (!exists) {
+                                    merged.push(newTask);
+                                }
+                            });
+                            saveTasks(merged);
+                        }
+                    } else {
+                        saveTasks(importedData);
+                    }
+
+                    loadRecurringTasks();
+                    initializeCategorySelect();
+                    initializeMonthTabs();
+                    initializeExistingTaskSelect();
+                    renderTasks();
+                    showNotification('업무 데이터가 가져와졌습니다', 'success');
+
+                    document.getElementById('importFile').value = '';
+                } catch (error) {
+                    showNotification('파일 형식이 올바르지 않습니다', 'error');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 반복 업무 자동 로드
+        function loadRecurringTasks() {
+            const tasks = loadTasks();
+            const today = new Date().toISOString().split('T')[0];
+            const todayDate = new Date(today);
+
+            tasks.forEach(task => {
+                if (!task.isRecurring || task.recurringType === 'none') return;
+
+                const dueDate = new Date(task.dueDate);
+                let shouldAdd = false;
+
+                if (task.recurringType === 'monthly') {
+                    if (dueDate.getDate() === todayDate.getDate()) {
+                        shouldAdd = true;
+                    }
+                } else if (task.recurringType === 'weekly') {
+                    if (dueDate.getDay() === todayDate.getDay()) {
+                        shouldAdd = true;
+                    }
+                } else if (task.recurringType === 'daily') {
+                    shouldAdd = true;
+                }
+
+                const isDuplicate = tasks.some(t =>
+                    t.category === task.category &&
+                    t.subcategory === task.subcategory &&
+                    t.title === task.title &&
+                    t.dueDate === today
+                );
+
+                if (shouldAdd && !isDuplicate) {
+                    const newTask = {
+                        id: Date.now(),
+                        category: task.category,
+                        subcategory: task.subcategory,
+                        title: task.title,
+                        priority: task.priority,
+                        dueDate: today,
+                        status: 'PENDING',
+                        isRecurring: true,
+                        recurringType: task.recurringType
+                    };
+                    tasks.push(newTask);
+                }
+            });
+
+            saveTasks(tasks);
+        }
+
+        // 알림 표시
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
         // 초기화
         loadRecurringTasks();
         initializeCategorySelect();
-        initializeExistingTaskSelect();
         initializeMonthTabs();
+        initializeExistingTaskSelect();
         renderTasks();
 
-        // 오늘 날짜 기본값 설정
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('dueDate').value = today;
         document.getElementById('copyDate').value = today;
