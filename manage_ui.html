@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>업무 관리 시스템</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 25px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .task-list {
+            max-width: 100%;
+        }
+
+        .task-item {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .task-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .task-meta {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .task-actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+            width: auto;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+
+        .priority-high {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .priority-medium {
+            background: #ffa94d;
+            color: white;
+        }
+
+        .priority-low {
+            background: #69db7c;
+            color: white;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            background: #e7f5ff;
+            color: #0066cc;
+        }
+
+        .status-badge.completed {
+            background: #d3f9d8;
+            color: #2f9e44;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .notification.success {
+            border-left: 4px solid #69db7c;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 업무 관리 시스템</h1>
+            <p>매일 10시에 자동으로 업무 보고서를 이메일로 받습니다</p>
+        </div>
+
+        <div class="main-content">
+            <!-- 새 업무 추가 -->
+            <div class="card">
+                <div class="card-title">➕ 새 업무 추가</div>
+
+                <div class="form-group">
+                    <label for="title">제목 *</label>
+                    <input type="text" id="title" placeholder="업무 제목을 입력하세요">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">설명</label>
+                    <textarea id="description" placeholder="업무 설명을 입력하세요"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="priority">우선순위 *</label>
+                    <select id="priority">
+                        <option value="">선택...</option>
+                        <option value="HIGH">높음</option>
+                        <option value="MEDIUM">중간</option>
+                        <option value="LOW">낮음</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueDate">기한 *</label>
+                    <input type="date" id="dueDate">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="addTask()">업무 추가</button>
+                    <button class="btn-secondary" onclick="clearForm()">초기화</button>
+                </div>
+            </div>
+
+            <!-- 업무 목록 -->
+            <div class="card">
+                <div class="card-title">📌 업무 목록</div>
+
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: 500; margin-bottom: 10px;">필터:</div>
+                    <button id="btn-all" style="padding: 8px 15px; margin-right: 10px; border: none; border-radius: 4px; background: #667eea; color: white; cursor: pointer; font-weight: 500;" onclick="filterTasks('all', this)">전체</button>
+                    <button id="btn-today" style="padding: 8px 15px; margin-right: 10px; border: none; border-radius: 4px; background: #f0f0f0; color: #333; cursor: pointer; font-weight: 500;" onclick="filterTasks('today', this)">📌 오늘</button>
+                    <button id="btn-week" style="padding: 8px 15px; margin-right: 10px; border: none; border-radius: 4px; background: #f0f0f0; color: #333; cursor: pointer; font-weight: 500;" onclick="filterTasks('week', this)">📅 주중</button>
+                    <button id="btn-month" style="padding: 8px 15px; border: none; border-radius: 4px; background: #f0f0f0; color: #333; cursor: pointer; font-weight: 500;" onclick="filterTasks('month', this)">📆 월중</button>
+                </div>
+
+                <div id="taskList" class="task-list">
+                    <div class="empty-state">
+                        <p>업무를 추가해보세요</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 안내사항 -->
+        <div class="card">
+            <div class="card-title">⚙️ 설정 안내</div>
+            <div style="color: #666; line-height: 1.6;">
+                <p><strong>1. 메일 설정</strong></p>
+                <p style="margin-left: 20px; margin-bottom: 10px;">
+                    email_config.json 파일을 열어 다음을 설정하세요:
+                    <br>- sender_password: 이메일 앱 비밀번호
+                    <br>- 참고: Gmail은 <a href="https://myaccount.google.com/apppasswords" target="_blank">여기</a>에서 앱 비밀번호 생성
+                </p>
+
+                <p><strong>2. 자동화 설정 (Windows Task Scheduler)</strong></p>
+                <p style="margin-left: 20px; margin-bottom: 10px;">
+                    1) Windows에서 "작업 스케줄러" 검색 및 실행
+                    <br>2) "작업 만들기" 클릭
+                    <br>3) "트리거" 탭에서 매일 10:00에 반복하도록 설정
+                    <br>4) "작업" 탭에서 다음 프로그램 실행:
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;프로그램: cmd.exe
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;인수 추가: /c "C:\Users\Admin\Desktop\2일차 과제-1\scheduler.bat"
+                </p>
+
+                <p><strong>3. 수동 실행 테스트</strong></p>
+                <p style="margin-left: 20px;">
+                    PowerShell에서 다음 실행:
+                    <br>cd "C:\Users\Admin\Desktop\2일차 과제-1"
+                    <br>python scheduler.bat
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        let currentFilter = 'all';
+
+        // 날짜 범위 계산
+        function getDateRanges() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            const weekEnd = new Date(today);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+
+            const monthEnd = new Date(today);
+            monthEnd.setDate(monthEnd.getMonth() + 1);
+            monthEnd.setDate(0);
+
+            return { today, tomorrow, weekEnd, monthEnd };
+        }
+
+        // 업무 카테고리 결정
+        function getTaskCategory(dueDate) {
+            const taskDate = new Date(dueDate);
+            const ranges = getDateRanges();
+
+            if (taskDate.toDateString() === ranges.today.toDateString()) {
+                return 'today';
+            } else if (taskDate <= ranges.weekEnd && taskDate > ranges.today) {
+                return 'week';
+            } else if (taskDate <= ranges.monthEnd && taskDate > ranges.weekEnd) {
+                return 'month';
+            }
+            return 'overdue';
+        }
+
+        // 로컬 스토리지에서 업무 불러오기
+        function loadTasks() {
+            const tasks = localStorage.getItem('tasks');
+            return tasks ? JSON.parse(tasks) : [];
+        }
+
+        // 업무 저장
+        function saveTasks(tasks) {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        // 업무 추가
+        function addTask() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const priority = document.getElementById('priority').value;
+            const dueDate = document.getElementById('dueDate').value;
+
+            if (!title || !priority || !dueDate) {
+                showNotification('필수 항목을 모두 입력하세요', 'error');
+                return;
+            }
+
+            const tasks = loadTasks();
+            const newTask = {
+                id: Date.now(),
+                title,
+                description,
+                priority,
+                dueDate,
+                status: 'PENDING'
+            };
+
+            tasks.push(newTask);
+            saveTasks(tasks);
+            renderTasks();
+            clearForm();
+            showNotification('업무가 추가되었습니다', 'success');
+        }
+
+        // 업무 삭제
+        function deleteTask(id) {
+            if (confirm('이 업무를 삭제하시겠습니까?')) {
+                const tasks = loadTasks();
+                const filtered = tasks.filter(t => t.id !== id);
+                saveTasks(filtered);
+                renderTasks();
+                showNotification('업무가 삭제되었습니다', 'success');
+            }
+        }
+
+        // 업무 완료 토글
+        function toggleComplete(id) {
+            const tasks = loadTasks();
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.status = task.status === 'PENDING' ? 'COMPLETED' : 'PENDING';
+                saveTasks(tasks);
+                renderTasks();
+            }
+        }
+
+        // 필터 변경
+        function filterTasks(filter, btn) {
+            currentFilter = filter;
+            const buttons = document.querySelectorAll('#btn-all, #btn-today, #btn-week, #btn-month');
+            buttons.forEach(b => {
+                b.style.background = '#f0f0f0';
+                b.style.color = '#333';
+            });
+            btn.style.background = '#667eea';
+            btn.style.color = 'white';
+            renderTasks();
+        }
+
+        // 업무 렌더링
+        function renderTasks() {
+            const tasks = loadTasks();
+            const taskList = document.getElementById('taskList');
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<div class="empty-state"><p>업무를 추가해보세요</p></div>';
+                return;
+            }
+
+            // 필터링
+            let filteredTasks = tasks;
+            if (currentFilter !== 'all') {
+                filteredTasks = tasks.filter(task => getTaskCategory(task.dueDate) === currentFilter);
+            }
+
+            // 정렬
+            const sorted = filteredTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+            if (sorted.length === 0) {
+                taskList.innerHTML = '<div class="empty-state"><p>해당하는 업무가 없습니다</p></div>';
+                return;
+            }
+
+            // 카테고리별 그룹화
+            const grouped = {};
+            sorted.forEach(task => {
+                const category = getTaskCategory(task.dueDate);
+                if (!grouped[category]) grouped[category] = [];
+                grouped[category].push(task);
+            });
+
+            // 카테고리 순서
+            const categoryOrder = ['today', 'week', 'month', 'overdue'];
+            const categoryNames = {
+                'today': '📌 오늘 할 것',
+                'week': '📅 주중에 할 것',
+                'month': '📆 월중에 할 것',
+                'overdue': '⚠️ 기한 지난 업무'
+            };
+
+            let html = '';
+            categoryOrder.forEach(category => {
+                if (grouped[category]) {
+                    html += `<div style="margin-bottom: 20px;"><div style="font-weight: bold; color: #667eea; margin-bottom: 10px; font-size: 14px;">${categoryNames[category]}</div>`;
+
+                    html += grouped[category].map(task => {
+                        const priorityMap = { HIGH: '높음', MEDIUM: '중간', LOW: '낮음' };
+                        const statusText = task.status === 'COMPLETED' ? '완료' : '진행중';
+
+                        return `
+                            <div class="task-item">
+                                <div class="task-content">
+                                    <div class="task-title">
+                                        <input type="checkbox" ${task.status === 'COMPLETED' ? 'checked' : ''}
+                                            onchange="toggleComplete(${task.id})" style="margin-right: 8px;">
+                                        ${task.title}
+                                    </div>
+                                    <div class="task-desc">${task.description || '설명 없음'}</div>
+                                    <div class="task-meta">
+                                        <span class="priority-badge priority-${task.priority.toLowerCase()}">
+                                            ${priorityMap[task.priority]}
+                                        </span>
+                                        <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}">
+                                            ${statusText}
+                                        </span>
+                                        <span>${task.dueDate}</span>
+                                    </div>
+                                </div>
+                                <div class="task-actions">
+                                    <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    html += '</div>';
+                }
+            });
+
+            taskList.innerHTML = html;
+        }
+
+        // 폼 초기화
+        function clearForm() {
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('priority').value = '';
+            document.getElementById('dueDate').value = '';
+        }
+
+        // 알림 표시
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // 초기화
+        renderTasks();
+
+        // 오늘 날짜 기본값 설정
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('dueDate').value = today;
+    </script>
+</body>
+</html>
