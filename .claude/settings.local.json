@@ -3,7 +3,9 @@
     "allow": [
       "Bash(python report_generator.py)",
       "PowerShell(python --version)",
-      "PowerShell(cd \"C:\\\\Users\\\\Admin\\\\Desktop\\\\2일차 과제-1\"; powershell -ExecutionPolicy Bypass -File \"report_generator.ps1\" -ScriptPath \".\")"
+      "PowerShell(cd \"C:\\\\Users\\\\Admin\\\\Desktop\\\\2일차 과제-1\"; powershell -ExecutionPolicy Bypass -File \"report_generator.ps1\" -ScriptPath \".\")",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
