@@ -425,8 +425,12 @@
             <div class="card">
                 <div class="card-title">📌 업무 목록</div>
 
-                <!-- 월별 탭 -->
-                <div class="month-tabs" id="monthTabs"></div>
+                <!-- 월 선택 -->
+                <div style="margin-bottom: 15px;">
+                    <select id="taskMonthSelect" onchange="selectTaskMonth(this.value)" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; font-weight: 500;">
+                        <option value="">월을 선택하세요</option>
+                    </select>
+                </div>
 
                 <div class="filter-buttons">
                     <button class="btn-primary" id="btn-all" onclick="filterTasks('all', this)">전체</button>
@@ -779,7 +783,7 @@
             }
         }
 
-        // 월별 탭 초기화
+        // 월별 탭 초기화 및 드롭다운 채우기
         function initializeMonthTabs() {
             const tasks = loadTasks();
             const monthsSet = new Set();
@@ -789,31 +793,45 @@
                 monthsSet.add(monthKey);
             });
             const months = Array.from(monthsSet).sort().reverse();
-            const monthTabs = document.getElementById('monthTabs');
-            monthTabs.innerHTML = '';
+
+            // 드롭다운 초기화
+            const taskMonthSelect = document.getElementById('taskMonthSelect');
+            taskMonthSelect.innerHTML = '<option value="">월을 선택하세요</option>';
+
             if (months.length === 0) {
-                monthTabs.innerHTML = '<p style="color: #999; padding: 10px;">업무를 추가하면 월별 탭이 생성됩니다</p>';
                 return;
             }
+
             const today = new Date();
             const currentMonthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
             if (!selectedMonth) {
                 selectedMonth = months.includes(currentMonthKey) ? currentMonthKey : months[0];
             }
+
+            // 드롭다운에 월 추가
             months.forEach(monthKey => {
                 const [year, month] = monthKey.split('-');
-                const btn = document.createElement('button');
-                btn.className = `month-tab ${monthKey === selectedMonth ? 'active' : ''}`;
-                btn.textContent = `${year}년 ${parseInt(month)}월`;
-                btn.onclick = () => selectMonth(monthKey);
-                monthTabs.appendChild(btn);
+                const option = document.createElement('option');
+                option.value = monthKey;
+                option.textContent = `${year}년 ${parseInt(month)}월`;
+                if (monthKey === selectedMonth) {
+                    option.selected = true;
+                }
+                taskMonthSelect.appendChild(option);
             });
         }
 
         function selectMonth(monthKey) {
             selectedMonth = monthKey;
-            initializeMonthTabs();
+            document.getElementById('taskMonthSelect').value = monthKey;
             renderTasks();
+        }
+
+        function selectTaskMonth(monthKey) {
+            if (monthKey) {
+                selectedMonth = monthKey;
+                renderTasks();
+            }
         }
 
         // 필터 변경
