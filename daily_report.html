@@ -63,44 +63,6 @@
             gap: 8px;
         }
 
-        .task-item {
-            background: #f9f9f9;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            border-left: 4px solid #667eea;
-        }
-
-        .task-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 5px;
-        }
-
-        .status-icon {
-            font-size: 16px;
-        }
-
-        .task-title {
-            font-weight: 500;
-            flex: 1;
-        }
-
-        .priority-badge {
-            background: #f0f0f0;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        .task-description {
-            font-size: 13px;
-            color: #666;
-            margin-left: 26px;
-        }
-
         .stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -125,6 +87,74 @@
             font-size: 12px;
             opacity: 0.9;
             margin-top: 5px;
+        }
+
+        .category-group {
+            margin-bottom: 20px;
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .task-item {
+            background: #f9f9f9;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .task-title {
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .priority-badge {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .subtasks {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+            margin-left: 20px;
+        }
+
+        .subtask {
+            background: white;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+            font-size: 13px;
+        }
+
+        .subtask-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .subtask-type {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
         }
 
         .schedule-grid {
@@ -165,7 +195,7 @@
             <div class="section-title">📊 요약 통계</div>
             <div class="stats">
                 <div class="stat-box">
-                    <div class="stat-number">6</div>
+                    <div class="stat-number">7</div>
                     <div class="stat-label">전체 업무</div>
                 </div>
                 <div class="stat-box">
@@ -173,7 +203,7 @@
                     <div class="stat-label">완료</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number">6</div>
+                    <div class="stat-number">7</div>
                     <div class="stat-label">진행중</div>
                 </div>
                 <div class="stat-box">
@@ -186,66 +216,152 @@
         <div class="section">
             <div class="section-title">📌 오늘 할 것</div>
 
-            <div class="task-item" style="border-left: 4px solid #ff6b6b">
-                <div class="task-header">
-                    <span class="status-icon">⭕</span>
-                    <span class="task-title">프로젝트 기획서 작성</span>
-                    <span class="priority-badge">🔴 HIGH</span>
+            <div class="category-group">
+                <div class="category-header">🏷️ 부가세 신고</div>
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">수출실적 검토하기</span>
+                        <span class="priority-badge">🔴 HIGH</span>
+                    </div>
+                    <div class="subtasks">
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 선적일 확인하기</div>
+                            <div class="subtask-type">수출</div>
+                        </div>
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 영세율 서류 요청하기</div>
+                            <div class="subtask-type">수출/내수</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="task-description">새로운 프로젝트의 기획서를 작성하고 검토받기</div>
             </div>
 
-            <div class="task-item" style="border-left: 4px solid #ff6b6b">
-                <div class="task-header">
-                    <span class="status-icon">⭕</span>
-                    <span class="task-title">회의 준비</span>
-                    <span class="priority-badge">🔴 HIGH</span>
+            <div class="category-group">
+                <div class="category-header">🏷️ 프로젝트 관리</div>
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">프로젝트 기획서 작성</span>
+                        <span class="priority-badge">🔴 HIGH</span>
+                    </div>
+                    <div class="subtasks">
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 요구사항 정의</div>
+                            <div class="subtask-type">기획</div>
+                        </div>
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 일정 계획 수립</div>
+                            <div class="subtask-type">계획</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="task-description">오후 3시 회의 자료 준비 및 검토</div>
             </div>
 
-            <div class="task-item" style="border-left: 4px solid #ffa94d">
-                <div class="task-header">
-                    <span class="status-icon">⭕</span>
-                    <span class="task-title">이메일 답변</span>
-                    <span class="priority-badge">🟠 MEDIUM</span>
+            <div class="category-group">
+                <div class="category-header">🏷️ 회의 준비</div>
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">오후 3시 회의 자료 준비</span>
+                        <span class="priority-badge">🔴 HIGH</span>
+                    </div>
+                    <div class="subtasks">
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 발표 자료 작성</div>
+                            <div class="subtask-type">준비</div>
+                        </div>
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 자료 검토</div>
+                            <div class="subtask-type">검토</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="task-description">미처리 이메일에 대한 답변</div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-header">🏷️ 이메일 관리</div>
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">미처리 이메일 처리</span>
+                        <span class="priority-badge">🟠 MEDIUM</span>
+                    </div>
+                    <div class="subtasks">
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 고객 문의 답변</div>
+                            <div class="subtask-type">고객</div>
+                        </div>
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 팀 내부 메일 답변</div>
+                            <div class="subtask-type">내부</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">📅 주중에 할 것</div>
 
-            <div class="task-item" style="border-left: 4px solid #ffa94d">
-                <div class="task-header">
-                    <span class="status-icon">⭕</span>
-                    <span class="task-title">팀 보고서 검토</span>
-                    <span class="priority-badge">🟠 MEDIUM</span>
+            <div class="category-group">
+                <div class="category-header">🏷️ 팀 관리</div>
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">주간 보고서 검토</span>
+                        <span class="priority-badge">🟠 MEDIUM</span>
+                    </div>
+                    <div class="subtasks">
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 팀원 보고서 확인</div>
+                            <div class="subtask-type">검토</div>
+                        </div>
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 피드백 전달</div>
+                            <div class="subtask-type">소통</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="task-description">팀원들의 주간 보고서 검토</div>
-            </div>
-
-            <div class="task-item" style="border-left: 4px solid #ffa94d">
-                <div class="task-header">
-                    <span class="status-icon">⭕</span>
-                    <span class="task-title">고객 피드백 분석</span>
-                    <span class="priority-badge">🟠 MEDIUM</span>
-                </div>
-                <div class="task-description">최근 고객 피드백 수집 및 분석</div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">📆 월중에 할 것</div>
 
-            <div class="task-item" style="border-left: 4px solid #69db7c">
-                <div class="task-header">
-                    <span class="status-icon">⭕</span>
-                    <span class="task-title">코드 리뷰</span>
-                    <span class="priority-badge">🟢 LOW</span>
+            <div class="category-group">
+                <div class="category-header">🏷️ 고객 관리</div>
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">고객 피드백 분석</span>
+                        <span class="priority-badge">🟠 MEDIUM</span>
+                    </div>
+                    <div class="subtasks">
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 피드백 수집</div>
+                            <div class="subtask-type">수집</div>
+                        </div>
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 분석 및 보고</div>
+                            <div class="subtask-type">분석</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="task-description">팀의 Pull Request 코드 리뷰</div>
+            </div>
+
+            <div class="category-group">
+                <div class="category-header">🏷️ 코드 관리</div>
+                <div class="task-item">
+                    <div class="task-header">
+                        <span class="task-title">PR 코드 리뷰</span>
+                        <span class="priority-badge">🟢 LOW</span>
+                    </div>
+                    <div class="subtasks">
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 코드 검토</div>
+                            <div class="subtask-type">검토</div>
+                        </div>
+                        <div class="subtask">
+                            <div class="subtask-name">✓ 피드백 작성</div>
+                            <div class="subtask-type">피드백</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -254,24 +370,24 @@
             <div class="schedule-grid">
                 <div class="schedule-item">
                     <p><strong>📌 오늘 할 것</strong></p>
-                    <p>업무: <strong>3</strong>건</p>
+                    <p>업무: <strong>4</strong>건</p>
                     <p>완료: <strong>0</strong>건</p>
                 </div>
                 <div class="schedule-item">
                     <p><strong>📅 주중에 할 것</strong></p>
-                    <p>업무: <strong>2</strong>건</p>
-                    <p>완료: <strong>0</strong>건</p>
-                </div>
-                <div class="schedule-item">
-                    <p><strong>📆 월중에 할 것</strong></p>
                     <p>업무: <strong>1</strong>건</p>
                     <p>완료: <strong>0</strong>건</p>
                 </div>
                 <div class="schedule-item">
+                    <p><strong>📆 월중에 할 것</strong></p>
+                    <p>업무: <strong>2</strong>건</p>
+                    <p>완료: <strong>0</strong>건</p>
+                </div>
+                <div class="schedule-item">
                     <p><strong>우선순위</strong></p>
-                    <p>HIGH: <strong>2</strong>건</p>
-                    <p>MEDIUM: <strong>2</strong>건</p>
-                    <p>LOW: <strong>2</strong>건</p>
+                    <p>HIGH: <strong>3</strong>건</p>
+                    <p>MEDIUM: <strong>3</strong>건</p>
+                    <p>LOW: <strong>1</strong>건</p>
                 </div>
             </div>
         </div>
