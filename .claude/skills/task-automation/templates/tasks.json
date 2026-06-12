@@ -1,0 +1,35 @@
+﻿[
+  {
+    "id": "task-001",
+    "category": "부가세신고",
+    "subcategory": "수출",
+    "title": "선적일 확인하기",
+    "priority": "HIGH",
+    "dueDate": "2026-06-12",
+    "status": "PENDING",
+    "isRecurring": false,
+    "recurringType": null
+  },
+  {
+    "id": "task-002",
+    "category": "부가세신고",
+    "subcategory": "수출",
+    "title": "영세율 서류 요청하기",
+    "priority": "HIGH",
+    "dueDate": "2026-06-12",
+    "status": "PENDING",
+    "isRecurring": false,
+    "recurringType": null
+  },
+  {
+    "id": "task-003",
+    "category": "회계",
+    "subcategory": "월급",
+    "title": "급여 지급",
+    "priority": "HIGH",
+    "dueDate": "2026-06-12",
+    "status": "PENDING",
+    "isRecurring": true,
+    "recurringType": "monthly"
+  }
+]
