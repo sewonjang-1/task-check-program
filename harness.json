@@ -17,7 +17,8 @@
     "test": ".\\scripts\\test.ps1",
     "deploy": ".\\scripts\\deploy.ps1",
     "review": ".\\scripts\\code-review.ps1",
-    "clean": ".\\scripts\\clean.ps1"
+    "clean": ".\\scripts\\clean.ps1",
+    "quality": ".\\scripts\\quality-check.ps1"
   },
   "hooks": {
     "pre-commit": ".\\hooks\\pre-commit.ps1",
