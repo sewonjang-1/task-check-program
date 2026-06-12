@@ -1,0 +1,39 @@
+{
+  "project": {
+    "name": "업무 자동화 시스템",
+    "version": "1.0.0",
+    "description": "팀 전체의 업무 관리를 자동화하는 시스템",
+    "author": "Admin"
+  },
+  "environment": {
+    "os": "Windows",
+    "powershell": "5.0+",
+    "node": "optional",
+    "python": "optional"
+  },
+  "scripts": {
+    "setup": ".\\scripts\\setup.ps1",
+    "start": ".\\scripts\\run.ps1",
+    "test": ".\\scripts\\test.ps1",
+    "deploy": ".\\scripts\\deploy.ps1",
+    "review": ".\\scripts\\code-review.ps1",
+    "clean": ".\\scripts\\clean.ps1"
+  },
+  "hooks": {
+    "pre-commit": ".\\hooks\\pre-commit.ps1",
+    "post-commit": ".\\hooks\\post-commit.ps1",
+    "pre-push": ".\\hooks\\pre-push.ps1",
+    "post-merge": ".\\hooks\\post-merge.ps1"
+  },
+  "features": {
+    "web-ui": true,
+    "auto-email": true,
+    "progress-tracking": true,
+    "recurring-tasks": true,
+    "data-backup": true
+  },
+  "ports": {
+    "default": 8080,
+    "backup": 8081
+  }
+}
