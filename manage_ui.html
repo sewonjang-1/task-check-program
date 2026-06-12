@@ -895,7 +895,7 @@
                         const allCompleted = categoryTasks.every(t => t.status === 'COMPLETED');
 
                         html += `<div style="margin-bottom: 12px; margin-left: 15px;">
-                            <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 12px; display: flex; align-items: center; gap: 8px;">
+                            <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 15px; display: flex; align-items: center; gap: 8px;">
                                 <input type="checkbox" ${allCompleted ? 'checked' : ''}
                                     onchange="toggleSubcategoryComplete('${category}', '${subcategory}', this.checked)"
                                     style="width: 18px; height: 18px; cursor: pointer; margin: 0; padding: 0;">
@@ -908,7 +908,7 @@
                             html += `<div class="task-item" style="margin-bottom: 8px; margin-left: 26px;">
                                 <div class="task-header">
                                     <div class="task-main">
-                                        <div class="task-title" style="color: ${task.status === 'COMPLETED' ? '#999' : '#333'}; text-decoration: ${task.status === 'COMPLETED' ? 'line-through' : 'none'};">
+                                        <div class="task-title" style="color: ${task.status === 'COMPLETED' ? '#999' : '#333'}; text-decoration: ${task.status === 'COMPLETED' ? 'line-through' : 'none'}; font-size: 13px;">
                                             ${task.title}
                                         </div>
                                         <div class="task-meta">
