@@ -603,6 +603,12 @@
 
         // 탭 전환
         function switchTab(tabName, btn) {
+            // P2-001: Clear edit mode when switching tabs
+            if (editingTaskId !== null) {
+                editingTaskId = null;
+                clearForm();
+            }
+
             currentTab = tabName;
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             const targetTab = document.getElementById(`tab-${tabName}`);
@@ -703,19 +709,19 @@
             if (category === 'new') category = categoryNew;
 
             // 입력값 검증 함수
-            function validateInputLength(text, minLen = 1, maxLen = 50) {
+            function validateInputLength(text, minLen = 1, maxLen = 50, fieldName = '입력값') {
                 const trimmed = (text || '').trim();
                 if (trimmed.length < minLen || trimmed.length > maxLen) {
-                    throw new Error(`길이는 ${minLen}~${maxLen}자여야 합니다`);
+                    throw new Error(`${fieldName}: ${minLen}~${maxLen}자여야 합니다`);
                 }
                 return trimmed;
             }
 
             // 입력값 검증
             try {
-                category = validateInputLength(category, 1, 30);
-                subcategory = validateInputLength(subcategory, 1, 30);
-                if (title) title = validateInputLength(title, 1, 100);
+                category = validateInputLength(category, 1, 30, '대분류');
+                subcategory = validateInputLength(subcategory, 1, 30, '소분류');
+                if (title) title = validateInputLength(title, 1, 100, '상세내용');
             } catch (error) {
                 showNotification(error.message, 'error');
                 return;
@@ -759,7 +765,7 @@
                 showNotification('업무가 수정되었습니다', 'success');
             } else {
                 const newTask = {
-                    id: Date.now(),
+                    id: parseInt(Date.now().toString() + Math.floor(Math.random() * 10000).toString().padStart(5, '0')),
                     category,
                     subcategory,
                     title: title || '(상세내용 없음)',
@@ -1077,8 +1083,8 @@
 
                         html += `<div style="margin-bottom: 12px; margin-left: 15px;">
                             <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 15px; display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" ${allCompleted ? 'checked' : ''}
-                                    onchange="toggleSubcategoryComplete('${category}', '${subcategory}', this.checked)"
+                                <input type="checkbox" class="subcategory-checkbox" ${allCompleted ? 'checked' : ''}
+                                    data-category="${category}" data-subcategory="${subcategory}"
                                     style="width: 18px; height: 18px; cursor: pointer; margin: 0; padding: 0;">
                                 <span>🏷️ ${category} > 📂 ${subcategory}</span>
                             </div>`;
@@ -1096,9 +1102,9 @@
                                 <span class="status-badge ${task.status === 'COMPLETED' ? 'completed' : ''}" style="padding: 4px 10px; font-size: 11px;">
                                     ${statusText}
                                 </span>
-                                <button onclick="editTask(${task.id})" style="padding: 4px 10px; background: #ffa94d; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">수정</button>
-                                <button onclick="copyTask(${task.id})" style="padding: 4px 10px; background: #667eea; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">복사</button>
-                                <button onclick="deleteTask(${task.id})" style="padding: 4px 10px; background: #ff6b6b; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">삭제</button>
+                                <button class="edit-btn" data-task-id="${task.id}" style="padding: 4px 10px; background: #ffa94d; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">수정</button>
+                                <button class="copy-btn" data-task-id="${task.id}" style="padding: 4px 10px; background: #667eea; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">복사</button>
+                                <button class="delete-btn" data-task-id="${task.id}" style="padding: 4px 10px; background: #ff6b6b; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">삭제</button>
                             </div>`;
                         });
 
@@ -1109,6 +1115,31 @@
                 html += `</div>`;
             });
             taskList.innerHTML = html;
+
+            // Event delegation for checkboxes and buttons
+            const listContainer = document.getElementById('taskList');
+            if (listContainer) {
+                listContainer.addEventListener('change', (e) => {
+                    if (e.target.classList.contains('subcategory-checkbox')) {
+                        const category = e.target.dataset.category;
+                        const subcategory = e.target.dataset.subcategory;
+                        toggleSubcategoryComplete(category, subcategory, e.target.checked);
+                    }
+                });
+
+                listContainer.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('edit-btn')) {
+                        const taskId = parseInt(e.target.dataset.taskId, 10);
+                        editTask(taskId);
+                    } else if (e.target.classList.contains('copy-btn')) {
+                        const taskId = parseInt(e.target.dataset.taskId, 10);
+                        copyTask(taskId);
+                    } else if (e.target.classList.contains('delete-btn')) {
+                        const taskId = parseInt(e.target.dataset.taskId, 10);
+                        deleteTask(taskId);
+                    }
+                });
+            }
         }
 
         // 폼 초기화
@@ -1286,7 +1317,6 @@
         }
 
         function clearCopyForm() {
-            document.getElementById('copyDate').value = '';
             document.getElementById('copyPriority').value = '';
             clearMonthSelection();
             selectedCopyTasks = [];
@@ -1431,31 +1461,29 @@
         function sendIncompleteMailNow() {
             showNotification('미완료 업무 메일을 발송하는 중...', 'success');
 
-            try {
-                // Windows에서 배치 파일 실행 (IE/Edge 레거시 모드에서만 작동)
-                const shell = new ActiveXObject("WScript.Shell");
-                const batchFile = "C:\\Users\\Admin\\Desktop\\2일차 과제-1\\incomplete_scheduler.bat";
-                shell.Run(batchFile, 0, false);
+            const instructions = `
+⚠️  안내: 미완료 업무 이메일 수동 발송
 
-                showNotification('✅ 미완료 업무 메일 발송 명령이 실행되었습니다!', 'success');
-            } catch (e) {
-                // 보안 제약으로 직접 실행 불가능한 경우
-                showAlert();
-            }
-        }
+이 시스템은 웹 브라우저 보안 정책으로 인해 배치 파일을 직접 실행할 수 없습니다.
 
-        // 메일 발송 가이드 알림
-        function showAlert() {
-            const message = `⚠️ 보안 제약으로 자동 실행이 불가합니다.
+[방법 1] PowerShell에서 실행 (권장)
+1. Windows 키 + R → "powershell" 입력 → Enter
+2. 다음 명령 복사/붙여넣기:
+   cd "C:\\Users\\Admin\\Desktop\\2일차 과제-1"
+   .\\incomplete_scheduler.bat
 
-다음 파일을 수동으로 실행하세요:
-📍 C:\\Users\\Admin\\Desktop\\2일차 과제-1\\incomplete_scheduler.bat
+[방법 2] 파일 탐색기에서 실행
+1. 탐색기 열기
+2. C:\\Users\\Admin\\Desktop\\2일차 과제-1 이동
+3. incomplete_scheduler.bat 더블클릭
 
-또는 PowerShell에서:
-cd "C:\\Users\\Admin\\Desktop\\2일차 과제-1"
-.\\incomplete_scheduler.bat`;
+[방법 3] Task Scheduler (자동 발송 설정)
+이미 설정되어 있습니다. 매일 5시에 자동 실행됩니다.
 
-            alert(message);
+도움이 필요하신가요? README.md의 이메일 설정 섹션을 참조하세요.`;
+
+            alert(instructions);
+            showNotification('✅ 수동 발송 가이드를 확인하세요', 'info');
         }
 
         // 초기화
@@ -1468,7 +1496,6 @@ cd "C:\\Users\\Admin\\Desktop\\2일차 과제-1"
 
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('dueDate').value = today;
-        document.getElementById('copyDate').value = today;
     </script>
 </body>
 </html>

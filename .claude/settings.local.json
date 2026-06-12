@@ -11,7 +11,12 @@
       "Bash(ls -la \"C:\\\\Users\\\\Admin\\\\.claude\\\\projects\\\\C--Users-Admin-Desktop-2------1\\\\\" 2>/dev/null || echo \"Not found\")",
       "Bash(gh issue *)",
       "Bash(git rm *)",
-      "Bash(rm -f daily_report.html)"
+      "Bash(rm -f daily_report.html)",
+      "Bash(powershell -NoProfile -ExecutionPolicy Bypass \".\\\\scripts\\\\quality-check.ps1\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Admin\\\\Desktop\\\\2일차 과제-1\" -Recurse -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(ConvertTo-Json)",
+      "Bash(powershell -Command \"Get-Content .\\\\manage_ui.html -Encoding UTF8 | Measure-Object -Line | Select-Object -ExpandProperty Lines\")"
     ]
   }
 }
