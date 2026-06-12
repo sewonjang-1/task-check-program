@@ -467,17 +467,10 @@
                 </div>
             </div>
 
-            <!-- 기존 업무에서 복사 -->
+            <!-- 기존 업무에서 일괄 복사 -->
             <div class="card">
-                <div class="card-title">📋 기존 업무에서 복사</div>
-                <p style="font-size: 12px; color: #999; margin-bottom: 15px;">기존 업무를 선택하여 기한을 새로 설정하고 복제합니다</p>
-
-                <div class="form-group">
-                    <label for="existingTaskSelect">기존 업무 *</label>
-                    <select id="existingTaskSelect">
-                        <option value="">업무 선택...</option>
-                    </select>
-                </div>
+                <div class="card-title">📋 기존 업무에서 일괄 복사</div>
+                <p style="font-size: 12px; color: #999; margin-bottom: 15px;">월별로 기존 업무를 선택하여 새 기한으로 복사합니다</p>
 
                 <div class="form-group">
                     <label for="copyDate">새 기한 *</label>
@@ -494,13 +487,17 @@
                     </select>
                 </div>
 
-                <div id="copyInfo" style="background: #f0f0f0; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; display: none;">
-                    <div id="copyCategory" style="color: #667eea; font-weight: 500;"></div>
-                    <div id="copySubcategory" style="color: #999; margin-top: 3px;"></div>
+                <div id="tasksListByMonth" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">
+                    <p style="color: #999; text-align: center; padding: 20px;">업무를 불러오는 중...</p>
+                </div>
+
+                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                    <button style="flex: 1; padding: 8px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;" onclick="selectAllTasksInMonth()">전월 모두 선택</button>
+                    <button style="flex: 1; padding: 8px; background: #999; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;" onclick="clearMonthSelection()">선택 해제</button>
                 </div>
 
                 <div class="button-group">
-                    <button class="btn-primary" onclick="copyFromExisting()">업무 복사</button>
+                    <button class="btn-primary" onclick="copyMultipleTasks()">선택 업무 복사</button>
                     <button class="btn-secondary" onclick="clearCopyForm()">초기화</button>
                 </div>
             </div>
@@ -530,7 +527,7 @@
     <script>
         let currentFilter = 'all';
         let editingTaskId = null;
-        let selectedCopyTask = null;
+        let selectedCopyTasks = [];
 
         // 날짜 범위 계산
         function getDateRanges() {
@@ -1027,44 +1024,93 @@
             saveTasks(tasks);
         }
 
-        // 기존 업무 드롭다운 초기화
+        // 월별 업무 목록 렌더링
         function initializeExistingTaskSelect() {
-            const existingTaskSelect = document.getElementById('existingTaskSelect');
             const tasks = loadTasks();
-
-            existingTaskSelect.innerHTML = '<option value="">업무 선택...</option>';
+            const container = document.getElementById('tasksListByMonth');
 
             if (tasks.length === 0) {
-                existingTaskSelect.disabled = true;
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">추가된 업무가 없습니다</p>';
                 return;
             }
 
-            existingTaskSelect.disabled = false;
-            tasks.forEach((task, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = `${task.category} > ${task.subcategory} - ${task.title}`;
-                existingTaskSelect.appendChild(option);
+            // 월별로 그룹화
+            const tasksByMonth = {};
+            tasks.forEach(task => {
+                const date = new Date(task.dueDate);
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                const monthLabel = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+
+                if (!tasksByMonth[monthKey]) {
+                    tasksByMonth[monthKey] = { label: monthLabel, tasks: [] };
+                }
+                tasksByMonth[monthKey].tasks.push(task);
             });
 
-            existingTaskSelect.addEventListener('change', function() {
-                if (this.value === '') {
-                    selectedCopyTask = null;
-                    document.getElementById('copyInfo').style.display = 'none';
-                } else {
-                    selectedCopyTask = tasks[parseInt(this.value)];
-                    // 선택된 업무 정보 표시
-                    document.getElementById('copyCategory').textContent = `대분류: ${selectedCopyTask.category}`;
-                    document.getElementById('copySubcategory').textContent = `소분류: ${selectedCopyTask.subcategory} | 상세: ${selectedCopyTask.title}`;
-                    document.getElementById('copyInfo').style.display = 'block';
-                }
+            // 최신순으로 정렬
+            const sortedMonths = Object.keys(tasksByMonth).sort().reverse();
+
+            let html = '';
+            sortedMonths.forEach((monthKey, monthIndex) => {
+                const monthData = tasksByMonth[monthKey];
+                const isFirstMonth = monthIndex === 0;
+
+                html += `<div style="margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                    <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 13px;">
+                        ${monthData.label}
+                    </div>`;
+
+                monthData.tasks.forEach(task => {
+                    const taskId = `copy-task-${task.id}`;
+                    html += `<div style="margin-left: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="${taskId}" value="${task.id}" class="copy-task-checkbox" ${isFirstMonth ? 'checked' : ''}>
+                        <label for="${taskId}" style="cursor: pointer; flex: 1; margin: 0; font-size: 12px;">
+                            ${task.category} &gt; ${task.subcategory} - ${task.title}
+                        </label>
+                    </div>`;
+                });
+
+                html += `</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 전월 모두 선택
+        function selectAllTasksInMonth() {
+            const tasks = loadTasks();
+            if (tasks.length === 0) return;
+
+            // 가장 최근 월의 업무만 선택
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+
+            const checkboxes = document.querySelectorAll('.copy-task-checkbox');
+            const recentMonthTasks = tasks.filter(t => {
+                const taskDate = new Date(t.dueDate);
+                return taskDate.getFullYear() === year && taskDate.getMonth() + 1 === month;
+            });
+
+            checkboxes.forEach(checkbox => {
+                const isInRecentMonth = recentMonthTasks.some(t => t.id === parseInt(checkbox.value));
+                checkbox.checked = isInRecentMonth;
             });
         }
 
-        // 기존 업무에서 복사
-        function copyFromExisting() {
-            if (!selectedCopyTask) {
-                showNotification('업무를 선택하세요', 'error');
+        // 선택 해제
+        function clearMonthSelection() {
+            document.querySelectorAll('.copy-task-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        // 선택된 여러 업무 복사
+        function copyMultipleTasks() {
+            const checkboxes = document.querySelectorAll('.copy-task-checkbox:checked');
+
+            if (checkboxes.length === 0) {
+                showNotification('복사할 업무를 선택하세요', 'error');
                 return;
             }
 
@@ -1077,34 +1123,40 @@
             }
 
             const tasks = loadTasks();
-            const newTask = {
-                id: Date.now(),
-                category: selectedCopyTask.category,
-                subcategory: selectedCopyTask.subcategory,
-                title: selectedCopyTask.title,
-                priority: priorityOverride || selectedCopyTask.priority,
-                dueDate: dueDate,
-                status: 'PENDING',
-                isRecurring: false,
-                recurringType: 'none'
-            };
+            const selectedTaskIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
 
-            tasks.push(newTask);
+            selectedTaskIds.forEach(taskId => {
+                const originalTask = tasks.find(t => t.id === taskId);
+                if (originalTask) {
+                    const newTask = {
+                        id: Date.now() + Math.random(),
+                        category: originalTask.category,
+                        subcategory: originalTask.subcategory,
+                        title: originalTask.title,
+                        priority: priorityOverride || originalTask.priority,
+                        dueDate: dueDate,
+                        status: 'PENDING',
+                        isRecurring: false,
+                        recurringType: 'none'
+                    };
+                    tasks.push(newTask);
+                }
+            });
+
             saveTasks(tasks);
             initializeCategorySelect();
             initializeExistingTaskSelect();
             renderTasks();
             clearCopyForm();
-            showNotification('업무가 복사되었습니다', 'success');
+            showNotification(`${selectedTaskIds.length}개의 업무가 복사되었습니다`, 'success');
         }
 
         // 기존 업무 폼 초기화
         function clearCopyForm() {
-            document.getElementById('existingTaskSelect').value = '';
             document.getElementById('copyDate').value = '';
             document.getElementById('copyPriority').value = '';
-            document.getElementById('copyInfo').style.display = 'none';
-            selectedCopyTask = null;
+            clearMonthSelection();
+            selectedCopyTasks = [];
         }
 
         // 초기화
