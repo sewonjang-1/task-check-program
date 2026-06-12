@@ -9,7 +9,9 @@
       "Bash(powershell -Command \"Start-Process 'C:\\\\Users\\\\Admin\\\\Desktop\\\\2일차 과제-1\\\\manage_ui.html'\")",
       "Bash(git push *)",
       "Bash(ls -la \"C:\\\\Users\\\\Admin\\\\.claude\\\\projects\\\\C--Users-Admin-Desktop-2------1\\\\\" 2>/dev/null || echo \"Not found\")",
-      "Bash(gh issue *)"
+      "Bash(gh issue *)",
+      "Bash(git rm *)",
+      "Bash(rm -f daily_report.html)"
     ]
   }
 }

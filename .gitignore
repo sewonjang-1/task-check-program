@@ -1,0 +1,85 @@
+# 임시 파일 및 생성물
+*.tmp
+*.temp
+test.txt
+*.log
+*.bak
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 빌드 및 배포 산출물
+dist/
+build/
+out/
+*.min.js
+*.min.css
+
+# 일일 결과물 (날짜 기반 HTML/보고서)
+*-202[0-9]-*.html
+ai-daily-*.html
+daily_report.html
+report_*.html
+*_report_*.html
+
+# 로컬 설정 및 환경
+.env
+.env.local
+*.local.json
+config.local.json
+
+# 캐시
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+.npm
+
+# 백업 파일
+*_backup.*
+*_old.*
+*.backup
+*.orig
+
+# 로그
+logs/
+*.log
+debug.log
+error.log
+
+# Node.js
+package-lock.json
+yarn.lock
+npm-debug.log
+
+# Python
+venv/
+env/
+.venv
+dist/
+build/
+*.egg-info/
+
+# 임시 데이터
+temp/
+tmp/
+*.tmp
+*.temp
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+$RECYCLE.BIN/
+ehthumbs.db
