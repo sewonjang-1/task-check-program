@@ -620,7 +620,7 @@
             const weekEnd = new Date(today);
             weekEnd.setDate(weekEnd.getDate() + 6);
             const monthEnd = new Date(today);
-            monthEnd.setDate(monthEnd.getMonth() + 1);
+            monthEnd.setMonth(monthEnd.getMonth() + 1);
             monthEnd.setDate(0);
             return { today, tomorrow, weekEnd, monthEnd };
         }
@@ -636,12 +636,29 @@
 
         // 로컬 스토리지
         function loadTasks() {
-            const tasks = localStorage.getItem('tasks');
-            return tasks ? JSON.parse(tasks) : [];
+            try {
+                const tasks = localStorage.getItem('tasks');
+                return tasks ? JSON.parse(tasks) : [];
+            } catch (error) {
+                console.error('Failed to load tasks:', error);
+                showNotification('데이터 로드 실패. 데이터를 초기화합니다.', 'error');
+                localStorage.removeItem('tasks');
+                return [];
+            }
         }
 
         function saveTasks(tasks) {
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            try {
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            } catch (error) {
+                if (error.name === 'QuotaExceededError') {
+                    showNotification('저장 공간 부족. 오래된 업무를 삭제하고 다시 시도해주세요.', 'error');
+                } else {
+                    showNotification('데이터 저장 실패: ' + error.message, 'error');
+                }
+                console.error('Failed to save tasks:', error);
+                throw error;
+            }
         }
 
         // 대분류 목록
@@ -685,8 +702,41 @@
 
             if (category === 'new') category = categoryNew;
 
+            // 입력값 검증 함수
+            function validateInputLength(text, minLen = 1, maxLen = 50) {
+                const trimmed = (text || '').trim();
+                if (trimmed.length < minLen || trimmed.length > maxLen) {
+                    throw new Error(`길이는 ${minLen}~${maxLen}자여야 합니다`);
+                }
+                return trimmed;
+            }
+
+            // 입력값 검증
+            try {
+                category = validateInputLength(category, 1, 30);
+                subcategory = validateInputLength(subcategory, 1, 30);
+                if (title) title = validateInputLength(title, 1, 100);
+            } catch (error) {
+                showNotification(error.message, 'error');
+                return;
+            }
+
             if (!category || !subcategory || !priority || !dueDate) {
                 showNotification('대분류, 소분류, 우선순위, 기한은 필수입니다', 'error');
+                return;
+            }
+
+            // 날짜 형식 검증
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(dueDate)) {
+                showNotification('유효한 날짜 형식을 입력해주세요 (YYYY-MM-DD)', 'error');
+                return;
+            }
+
+            // 실제 유효한 날짜 확인
+            const dateObj = new Date(dueDate);
+            if (isNaN(dateObj.getTime())) {
+                showNotification('유효하지 않은 날짜입니다', 'error');
                 return;
             }
 

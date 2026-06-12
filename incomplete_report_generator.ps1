@@ -3,9 +3,32 @@
 
 $tasksFile = "$PSScriptRoot\tasks.json"
 $reportFile = "$PSScriptRoot\incomplete_report.html"
+$logFile = "$PSScriptRoot\logs\report_generator_log.txt"
+
+# 로그 디렉토리 생성
+if (-not (Test-Path "$PSScriptRoot\logs")) {
+    New-Item -ItemType Directory -Path "$PSScriptRoot\logs" -Force | Out-Null
+}
+
+# tasks.json 파일 확인
+if (-not (Test-Path $tasksFile)) {
+    Write-Host "✗ tasks.json을 찾을 수 없습니다: $tasksFile"
+    Write-Host "  먼저 manage_ui.html에서 업무를 추가하세요"
+    Add-Content -Path $logFile -Value "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - ERROR: tasks.json not found" -Encoding UTF8
+    exit 1
+}
 
 # JSON 로드
-$tasks = Get-Content $tasksFile | ConvertFrom-Json
+try {
+    $tasks = Get-Content $tasksFile -Encoding UTF8 | ConvertFrom-Json
+    if (-not $tasks) {
+        $tasks = @()
+    }
+} catch {
+    Write-Host "✗ tasks.json 파일 형식이 잘못되었습니다: $_"
+    Add-Content -Path $logFile -Value "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - ERROR: Invalid JSON format - $_" -Encoding UTF8
+    exit 1
+}
 
 # 오늘 날짜
 $today = Get-Date

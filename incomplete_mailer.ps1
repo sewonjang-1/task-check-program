@@ -11,8 +11,25 @@ if (-not (Test-Path "$PSScriptRoot\logs")) {
 }
 
 try {
+    # 이메일 설정 파일 확인
+    if (-not (Test-Path $configFile)) {
+        throw "email_config.json을 찾을 수 없습니다. 설정 파일을 생성하세요."
+    }
+
     # 이메일 설정 로드
-    $config = Get-Content $configFile | ConvertFrom-Json
+    try {
+        $config = Get-Content $configFile -Encoding UTF8 | ConvertFrom-Json
+    } catch {
+        throw "email_config.json 파일 형식이 잘못되었습니다: $_"
+    }
+
+    # 필수 필드 검증
+    $requiredFields = @('smtp_server', 'smtp_port', 'sender_email', 'sender_password', 'recipient_email')
+    foreach ($field in $requiredFields) {
+        if (-not $config.$field) {
+            throw "email_config.json의 '$field' 필드가 설정되지 않았습니다"
+        }
+    }
 
     # 보고서 파일 확인
     if (-not (Test-Path $reportFile)) {
