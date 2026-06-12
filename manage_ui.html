@@ -506,6 +506,13 @@
                 <p style="font-size: 12px; color: #999; margin-bottom: 15px;">월별로 기존 업무를 선택하여 새 기한으로 복사합니다</p>
 
                 <div class="form-group">
+                    <label for="copyMonth">월 선택</label>
+                    <select id="copyMonth" onchange="updateTaskListByMonth()">
+                        <option value="">월을 선택하세요</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="copyPriority">우선순위 (선택사항)</label>
                     <select id="copyPriority">
                         <option value="">기존 우선순위 유지</option>
@@ -943,10 +950,11 @@
         // 기존 업무에서 일괄 복사
         function initializeExistingTaskSelect() {
             const tasks = loadTasks();
-            const container = document.getElementById('tasksListByMonth');
+            const copyMonthSelect = document.getElementById('copyMonth');
 
             if (tasks.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">추가된 업무가 없습니다</p>';
+                document.getElementById('tasksListByMonth').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">추가된 업무가 없습니다</p>';
+                copyMonthSelect.innerHTML = '<option value="">월을 선택하세요</option>';
                 return;
             }
 
@@ -964,30 +972,64 @@
 
             const sortedMonths = Object.keys(tasksByMonth).sort().reverse();
 
+            // 월 드롭다운 채우기
+            copyMonthSelect.innerHTML = '<option value="">월을 선택하세요</option>';
+            sortedMonths.forEach(monthKey => {
+                const option = document.createElement('option');
+                option.value = monthKey;
+                option.textContent = tasksByMonth[monthKey].label;
+                copyMonthSelect.appendChild(option);
+            });
+
+            // 첫 번째 월을 기본으로 선택
+            if (sortedMonths.length > 0) {
+                copyMonthSelect.value = sortedMonths[0];
+                updateTaskListByMonth();
+            }
+        }
+
+        // 월 변경 시 업무 목록 업데이트
+        function updateTaskListByMonth() {
+            const selectedMonth = document.getElementById('copyMonth').value;
+            const tasks = loadTasks();
+            const container = document.getElementById('tasksListByMonth');
+
+            if (!selectedMonth) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">월을 선택하세요</p>';
+                return;
+            }
+
+            const tasksByMonth = {};
+            tasks.forEach(task => {
+                const date = new Date(task.dueDate);
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+                if (monthKey === selectedMonth) {
+                    if (!tasksByMonth[monthKey]) {
+                        tasksByMonth[monthKey] = [];
+                    }
+                    tasksByMonth[monthKey].push(task);
+                }
+            });
+
             let html = '';
-            sortedMonths.forEach((monthKey, monthIndex) => {
-                const monthData = tasksByMonth[monthKey];
-                const isFirstMonth = monthIndex === 0;
-
-                html += `<div style="margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
-                    <div style="font-weight: 600; color: #667eea; margin-bottom: 8px; font-size: 13px;">
-                        ${monthData.label}
-                    </div>`;
-
-                monthData.tasks.forEach(task => {
+            if (tasksByMonth[selectedMonth]) {
+                html += `<div style="margin-bottom: 15px;">`;
+                tasksByMonth[selectedMonth].forEach((task, index) => {
                     const taskId = `copy-task-${task.id}`;
                     const dateId = `copy-date-${task.id}`;
-                    html += `<div style="margin-left: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="${taskId}" value="${task.id}" class="copy-task-checkbox" ${isFirstMonth ? 'checked' : ''}>
+                    html += `<div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="${taskId}" value="${task.id}" class="copy-task-checkbox" checked>
                         <input type="date" id="${dateId}" class="copy-task-date" value="${task.dueDate}" style="width: 100px; padding: 4px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px;">
                         <label for="${taskId}" style="cursor: pointer; flex: 1; margin: 0; font-size: 12px;">
                             ${task.category} &gt; ${task.subcategory} - ${task.title}
                         </label>
                     </div>`;
                 });
-
                 html += `</div>`;
-            });
+            } else {
+                html = '<p style="color: #999; text-align: center; padding: 20px;">이 월에 추가된 업무가 없습니다</p>';
+            }
 
             container.innerHTML = html;
         }
