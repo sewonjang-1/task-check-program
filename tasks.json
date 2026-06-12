@@ -7,7 +7,9 @@
       "title": "선적일 확인하기",
       "priority": "HIGH",
       "dueDate": "2026-06-12",
-      "status": "PENDING"
+      "status": "PENDING",
+      "isRecurring": false,
+      "recurringType": "none"
     },
     {
       "id": 2,

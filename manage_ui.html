@@ -438,6 +438,16 @@
                     <input type="date" id="dueDate">
                 </div>
 
+                <div class="form-group">
+                    <label for="recurringType">반복 설정</label>
+                    <select id="recurringType">
+                        <option value="none">반복 안 함</option>
+                        <option value="daily">매일</option>
+                        <option value="weekly">매주</option>
+                        <option value="monthly">매달</option>
+                    </select>
+                </div>
+
                 <div class="button-group">
                     <button class="btn-primary" onclick="addTask()">업무 추가</button>
                     <button class="btn-secondary" onclick="clearForm()">초기화</button>
@@ -558,6 +568,7 @@
             const title = document.getElementById('title').value;
             const priority = document.getElementById('priority').value;
             const dueDate = document.getElementById('dueDate').value;
+            const recurringType = document.getElementById('recurringType').value;
 
             // 새로운 대분류 입력
             if (category === 'new') {
@@ -578,7 +589,9 @@
                 title: title || '(상세내용 없음)',
                 priority,
                 dueDate,
-                status: 'PENDING'
+                status: 'PENDING',
+                isRecurring: recurringType !== 'none',
+                recurringType: recurringType
             };
 
             tasks.push(newTask);
@@ -587,6 +600,27 @@
             renderTasks();
             clearForm();
             showNotification('업무가 추가되었습니다', 'success');
+        }
+
+        // 업무 복사
+        function copyTask(id) {
+            const tasks = loadTasks();
+            const originalTask = tasks.find(t => t.id === id);
+
+            if (originalTask) {
+                // 폼에 데이터 채우기
+                document.getElementById('categorySelect').value = originalTask.category;
+                document.getElementById('categoryNew').style.display = 'none';
+                document.getElementById('categoryNew').value = '';
+                document.getElementById('subcategory').value = originalTask.subcategory;
+                document.getElementById('title').value = originalTask.title === '(상세내용 없음)' ? '' : originalTask.title;
+                document.getElementById('priority').value = originalTask.priority;
+                document.getElementById('dueDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('recurringType').value = originalTask.recurringType || 'none';
+
+                showNotification('업무가 복사되었습니다. 필요하면 수정 후 추가하세요.', 'success');
+                document.getElementById('categorySelect').focus();
+            }
         }
 
         // 업무 삭제
@@ -711,6 +745,7 @@
                                         </div>
                                     </div>
                                     <div class="task-actions">
+                                        <button class="btn-secondary" onclick="copyTask(${task.id})" style="background: #667eea; color: white; padding: 6px 12px;">복사</button>
                                         <button class="btn-danger" onclick="deleteTask(${task.id})">삭제</button>
                                     </div>
                                 </div>
@@ -734,8 +769,11 @@
             document.getElementById('subcategory').value = '';
             document.getElementById('title').value = '';
             document.getElementById('priority').value = '';
-            document.getElementById('dueDate').value = '';
-            document.getElementById('dueDate').focus();
+            document.getElementById('recurringType').value = 'none';
+
+            // 오늘 날짜로 설정
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dueDate').value = today;
         }
 
         // 알림 표시
@@ -748,7 +786,65 @@
             }, 3000);
         }
 
+        // 반복 업무 자동 로드
+        function loadRecurringTasks() {
+            const tasks = loadTasks();
+            const today = new Date().toISOString().split('T')[0];
+            const todayDate = new Date(today);
+
+            tasks.forEach(task => {
+                if (!task.isRecurring || task.recurringType === 'none') return;
+
+                const dueDate = new Date(task.dueDate);
+
+                // 반복 업무 확인
+                let shouldAdd = false;
+
+                if (task.recurringType === 'monthly') {
+                    // 매달 같은 날짜
+                    if (dueDate.getDate() === todayDate.getDate()) {
+                        shouldAdd = true;
+                    }
+                } else if (task.recurringType === 'weekly') {
+                    // 매주 같은 요일
+                    if (dueDate.getDay() === todayDate.getDay()) {
+                        shouldAdd = true;
+                    }
+                } else if (task.recurringType === 'daily') {
+                    // 매일
+                    shouldAdd = true;
+                }
+
+                // 오늘 날짜의 업무가 이미 있는지 확인
+                const isDuplicate = tasks.some(t =>
+                    t.category === task.category &&
+                    t.subcategory === task.subcategory &&
+                    t.title === task.title &&
+                    t.dueDate === today
+                );
+
+                // 새로운 업무 추가
+                if (shouldAdd && !isDuplicate) {
+                    const newTask = {
+                        id: Date.now(),
+                        category: task.category,
+                        subcategory: task.subcategory,
+                        title: task.title,
+                        priority: task.priority,
+                        dueDate: today,
+                        status: 'PENDING',
+                        isRecurring: true,
+                        recurringType: task.recurringType
+                    };
+                    tasks.push(newTask);
+                }
+            });
+
+            saveTasks(tasks);
+        }
+
         // 초기화
+        loadRecurringTasks();
         initializeCategorySelect();
         renderTasks();
 
